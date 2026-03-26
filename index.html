@@ -286,10 +286,10 @@
   <div class="wrap">
     <section class="card">
       <h1>BerryFold Cart Builder</h1>
-      <div class="sub">Build a custom order, generate a compact order code, then let customers paste that code into your Google Form.</div>
+      <div class="sub">Fill your cart to your desires here! We will generate a compact order code for you to paste into our Google Form.</div>
 
       <div class="step active" id="step-collection">
-        <h2>1. Choose a collection</h2>
+        <h2>Choose from our collections:</h2>
         <div class="option-grid" id="collection-options"></div>
       </div>
 
@@ -301,7 +301,6 @@
         <div class="code-line" id="builder-code"></div>
         <div class="actions">
           <button class="primary" id="add-to-cart-btn">Add item to cart</button>
-          <button class="secondary" id="copy-code-btn" type="button">Copy code</button>
           <button class="secondary" id="reset-builder-btn" type="button">Start over</button>
         </div>
       </div>
@@ -312,16 +311,14 @@
       <div class="muted">This is the running order list your customer can review before copying the final cart text into your Google Form.</div>
 
       <div class="actions">
-        <button class="secondary" id="copy-cart-btn" type="button">Copy full cart</button>
+        <button class="secondary" id="copy-cart-btn" type="button">Copy final order code</button>
         <button class="danger" id="clear-cart-btn" type="button">Clear cart</button>
       </div>
 
       <div id="cart-list"></div>
 
       <div class="totals">
-        <div class="totals-row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
-        <div class="totals-row"><span>Discount</span><span id="discount">-$0.00</span></div>
-        <div class="totals-row"><strong>Total</strong><strong id="total">$0.00</strong></div>
+        <div class="totals-row"><span>Pre-Discount Subtotal</span><span id="subtotal">$0.00</span></div>
         <div id="deal-box" class="deal hidden"></div>
         <div id="cart-warning" class="warning hidden"></div>
         <div class="code-line" id="full-cart-code" style="margin-top: 16px;">Cart is empty.</div>
@@ -333,35 +330,31 @@
     const CONFIG = {
       pricing: {
         berryBase: {
-          sky: 8.5,
-          sun: 8.5,
-          lva: 8.5,
-          dgn: 8.5,
-          rby: 8.5,
-          ngt: 9.5,
+          sky: 7.5,
+          sun: 7.5,
+          lva: 7.5,
+          dgn: 7.5,
+          rby: 9.0,
+          ngt: 9.0,
           lea: 9.0
         },
         pokeballBase: {
-          reg: 9.0,
-          gli: 10.0,
-          gdk: 10.0,
+          reg: 11.0,
+          gli: 11.0,
+          gdk: 11.0,
           ult: 11.0
         },
-        flowerBase: 7.5,
+        flowerBase: 5.00,
         keychainGold: 1.5,
-        keychainSilver: 1.25,
+        keychainSilver: 1.5,
         coatingBerry: 1.0,
-        coatingBall: 1.25,
+        coatingBall: 1.0,
         coatingFlower: 1.0
       },
-      deals: {
-        quantity3PlusPercent: 0.08,
-        quantity5PlusPercent: 0.12
-      },
       collections: [
-        { id: 'bf', name: 'BerryFold Series' },
-        { id: 'pb', name: 'Poke-Ball Selection' },
-        { id: 'sf', name: 'Stem Flower Series' }
+        { id: 'bf', name: 'MOCAS BerryFold Series' },
+        { id: 'pb', name: 'MOCAS Poke-Ball Assortment' },
+        { id: 'sf', name: 'MOCAS Stem Flower Selection' }
       ],
       berryModels: [
         { id: 'sky', name: 'SkyBerry (cyan)' },
@@ -407,8 +400,6 @@
     const builderCode = document.getElementById('builder-code');
     const cartList = document.getElementById('cart-list');
     const subtotalEl = document.getElementById('subtotal');
-    const discountEl = document.getElementById('discount');
-    const totalEl = document.getElementById('total');
     const dealBox = document.getElementById('deal-box');
     const fullCartCode = document.getElementById('full-cart-code');
     const cartWarning = document.getElementById('cart-warning');
@@ -425,7 +416,6 @@
       collectionOptions.innerHTML = CONFIG.collections.map(c => `
         <button class="option-btn ${state.builder.collection === c.id ? 'selected' : ''}" type="button" onclick="selectCollection('${c.id}')">
           <strong>${c.name}</strong><br>
-          <span class="muted">Code: [${c.id}]</span>
         </button>
       `).join('');
     }
@@ -444,7 +434,6 @@
           ${list.map(item => `
             <button class="option-btn ${selectedValue === item.id ? 'selected' : ''}" type="button" onclick="${setterName}('${item.id}')">
               <strong>${item.name}</strong><br>
-              <span class="muted">[${item.id}]</span>
             </button>
           `).join('')}
         </div>
@@ -456,10 +445,10 @@
         <h2>${title}</h2>
         <div class="option-grid">
           <button class="option-btn ${currentValue === 'y' ? 'selected' : ''}" type="button" onclick="${setterName}('y')">
-            <strong>Yes</strong><br><span class="muted">[y]</span>
+            <strong>Yes</strong><br>
           </button>
           <button class="option-btn ${currentValue === 'n' ? 'selected' : ''}" type="button" onclick="${setterName}('n')">
-            <strong>No</strong><br><span class="muted">[n]</span>
+            <strong>No</strong><br>
           </button>
         </div>
       `;
@@ -473,27 +462,27 @@
 
       if (c === 'bf') {
         stepConfig.innerHTML = `
-          ${optionButtons('2. Choose a BerryFold model', CONFIG.berryModels, state.builder.model, 'setBerryModel')}
-          ${state.builder.model ? optionButtons('3. Turn it into a keychain?', CONFIG.keychainOptions, state.builder.keychain, 'setBerryKeychain') : ''}
-          ${state.builder.model && state.builder.keychain ? yesNoButtons('4. Add resistance coating?', state.builder.coating, 'setBerryCoating') : ''}
+          ${optionButtons('2. Which BerryFold model would you like?', CONFIG.berryModels, state.builder.model, 'setBerryModel')}
+          ${state.builder.model ? optionButtons('3. Would you like to turn it into a keychain?', CONFIG.keychainOptions, state.builder.keychain, 'setBerryKeychain') : ''}
+          ${state.builder.model && state.builder.keychain ? yesNoButtons('4. Would you like to add a resistance coating?', state.builder.coating, 'setBerryCoating') : ''}
           ${state.builder.model && state.builder.keychain && state.builder.coating ? quantityAndNoteFields('5. Quantity and optional note', state.builder.qty, state.builder.note, 'setBuilderQty', 'setBuilderNote') : ''}
         `;
       }
 
       if (c === 'pb') {
         stepConfig.innerHTML = `
-          ${optionButtons('2. Choose a Poke-Ball model', CONFIG.ballModels, state.builder.model, 'setBallModel')}
-          ${state.builder.model ? yesNoButtons('3. Add resistance coating?', state.builder.coating, 'setBallCoating') : ''}
+          ${optionButtons('2. Which Poke-Ball model would you like?', CONFIG.ballModels, state.builder.model, 'setBallModel')}
+          ${state.builder.model ? yesNoButtons('3. Would you like to add a resistance coating?', state.builder.coating, 'setBallCoating') : ''}
           ${state.builder.model && state.builder.coating ? quantityAndNoteFields('4. Quantity and optional note', state.builder.qty, state.builder.note, 'setBuilderQty', 'setBuilderNote') : ''}
         `;
       }
 
       if (c === 'sf') {
         stepConfig.innerHTML = `
-          ${dropdownField('2. Select petal color', CONFIG.colors, state.builder.petal, 'setFlowerPetal')}
-          ${state.builder.petal ? dropdownField('3. Select core color', CONFIG.colors, state.builder.core, 'setFlowerCore') : ''}
-          ${state.builder.petal && state.builder.core ? dropdownField('4. Select stem color', CONFIG.colors, state.builder.stem, 'setFlowerStem') : ''}
-          ${state.builder.petal && state.builder.core && state.builder.stem ? yesNoButtons('5. Add resistance coating?', state.builder.coating, 'setFlowerCoating') : ''}
+          ${dropdownField('2. What color petal would you like?', CONFIG.colors, state.builder.petal, 'setFlowerPetal')}
+          ${state.builder.petal ? dropdownField('3. What color core would you like?', CONFIG.colors, state.builder.core, 'setFlowerCore') : ''}
+          ${state.builder.petal && state.builder.core ? dropdownField('4. What color stem would you like?', CONFIG.colors, state.builder.stem, 'setFlowerStem') : ''}
+          ${state.builder.petal && state.builder.core && state.builder.stem ? yesNoButtons('5. Would you like to add a resistance coating?', state.builder.coating, 'setFlowerCoating') : ''}
           ${state.builder.petal && state.builder.core && state.builder.stem && state.builder.coating ? quantityAndNoteFields('6. Quantity and optional note', state.builder.qty, state.builder.note, 'setBuilderQty', 'setBuilderNote') : ''}
         `;
       }
@@ -641,7 +630,7 @@
           + (b.coating === 'y' ? CONFIG.pricing.coatingBerry : 0);
         const code = ['bf', b.model, b.keychain, b.coating, `q${qty}`, note ? `t${note}` : null].filter(Boolean).join('-');
         return {
-          collection: 'BerryFold Series',
+          collection: 'MOCAS BerryFold Series',
           label: `${model.name} • ${keychain.name} • ${coatingLabel}`,
           code,
           qty,
@@ -657,7 +646,7 @@
           + (b.coating === 'y' ? CONFIG.pricing.coatingBall : 0);
         const code = ['pb', b.model, b.coating, `q${qty}`, note ? `t${note}` : null].filter(Boolean).join('-');
         return {
-          collection: 'Poke-Ball Selection',
+          collection: 'MOCAS Poke-Ball Assortment',
           label: `${model.name} • ${coatingLabel}`,
           code,
           qty,
@@ -673,7 +662,7 @@
       const unitPrice = CONFIG.pricing.flowerBase + (b.coating === 'y' ? CONFIG.pricing.coatingFlower : 0);
       const code = ['sf', b.petal, b.core, b.stem, b.coating, `q${qty}`, note ? `t${note}` : null].filter(Boolean).join('-');
       return {
-        collection: 'Stem Flower Series',
+        collection: 'MOCAS Stem Flower Selection',
         label: `Petal ${petal.name} • Core ${core.name} • Stem ${stem.name} • ${coatingLabel}`,
         code,
         qty,
@@ -721,23 +710,9 @@
     function cartTotals() {
       const subtotal = state.cart.reduce((sum, item) => sum + item.linePrice, 0);
       const totalQty = state.cart.reduce((sum, item) => sum + item.qty, 0);
-      let discount = 0;
-      let dealText = '';
-
-      if (totalQty >= 5) {
-        discount = subtotal * CONFIG.deals.quantity5PlusPercent;
-        dealText = `Bulk deal applied: ${Math.round(CONFIG.deals.quantity5PlusPercent * 100)}% off because the cart has ${totalQty} items.`;
-      } else if (totalQty >= 3) {
-        discount = subtotal * CONFIG.deals.quantity3PlusPercent;
-        dealText = `Mini bundle applied: ${Math.round(CONFIG.deals.quantity3PlusPercent * 100)}% off because the cart has ${totalQty} items.`;
-      }
-
       return {
         subtotal,
-        discount,
-        total: subtotal - discount,
         totalQty,
-        dealText
       };
     }
 
@@ -745,10 +720,7 @@
       if (!state.cart.length) {
         cartList.innerHTML = '<div class="muted" style="margin-top: 14px;">No items yet. Your future empire begins with one berry.</div>';
         subtotalEl.textContent = '$0.00';
-        discountEl.textContent = '-$0.00';
-        totalEl.textContent = '$0.00';
         fullCartCode.textContent = 'Cart is empty.';
-        dealBox.classList.add('hidden');
         cartWarning.classList.remove('hidden');
         cartWarning.textContent = 'Tip: customers can copy the full cart code here and paste it into your Google Form.';
         return;
@@ -764,9 +736,7 @@
             </div>
             <div class="item-price">${money(item.linePrice)}</div>
           </div>
-          <div class="cart-code">${item.code}</div>
           <div class="cart-controls">
-            <button class="secondary" type="button" onclick="copyText('${item.code.replace(/'/g, "\\'")}')">Copy item code</button>
             <button class="danger" type="button" onclick="removeCartItem(${index})">Remove item</button>
           </div>
         </div>
@@ -774,16 +744,6 @@
 
       const totals = cartTotals();
       subtotalEl.textContent = money(totals.subtotal);
-      discountEl.textContent = `-${money(totals.discount)}`;
-      totalEl.textContent = money(totals.total);
-
-      if (totals.dealText) {
-        dealBox.classList.remove('hidden');
-        dealBox.textContent = totals.dealText;
-      } else {
-        dealBox.classList.add('hidden');
-        dealBox.textContent = '';
-      }
 
       cartWarning.classList.add('hidden');
       fullCartCode.textContent = state.cart.map((item, i) => `${i + 1}.${item.code}`).join(' | ');
@@ -799,7 +759,6 @@
     }
 
     document.getElementById('add-to-cart-btn').addEventListener('click', addToCart);
-    document.getElementById('copy-code-btn').addEventListener('click', () => copyText(builderCode.textContent));
     document.getElementById('reset-builder-btn').addEventListener('click', resetBuilder);
     document.getElementById('clear-cart-btn').addEventListener('click', clearCart);
     document.getElementById('copy-cart-btn').addEventListener('click', () => copyText(fullCartCode.textContent));
