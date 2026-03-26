@@ -15,6 +15,8 @@
       --accent: #d94f70;
     }
 
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
       padding: 40px 20px;
@@ -24,11 +26,11 @@
     }
 
     .wrap {
-      max-width: 900px;
+      max-width: 980px;
       margin: 0 auto;
     }
 
-    .card {
+    .page-card {
       background: var(--card);
       border-radius: 20px;
       padding: 28px;
@@ -40,11 +42,26 @@
       font-size: 36px;
     }
 
-    .deal-row {
+    .sub {
+      color: var(--muted);
+      margin-bottom: 22px;
+      font-size: 18px;
+    }
+
+    .deal-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .deal-card {
       display: grid;
       grid-template-columns: 1.2fr 0.8fr;
-      gap: 20px;
+      gap: 18px;
       align-items: center;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
     }
 
     .deal-box {
@@ -63,11 +80,20 @@
       border-radius: 999px;
       margin-bottom: 10px;
       font-size: 12px;
+      letter-spacing: 0.02em;
     }
 
-    .deal-text {
-      font-size: 22px;
-      line-height: 1.4;
+    .deal-title {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .deal-note {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.45;
     }
 
     .timer {
@@ -94,17 +120,42 @@
     .time-value {
       font-size: 26px;
       font-weight: 700;
+      line-height: 1;
     }
 
     .time-label {
       font-size: 11px;
       opacity: 0.7;
       margin-top: 4px;
+      letter-spacing: 0.03em;
     }
 
-    @media (max-width: 700px) {
-      .deal-row {
+    .empty-state {
+      display: none;
+      background: #fff7fa;
+      border: 1px solid #f3c8d4;
+      border-radius: 16px;
+      padding: 20px;
+      color: var(--muted);
+      font-size: 18px;
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      .deal-card {
         grid-template-columns: 1fr;
+      }
+
+      .timer-grid {
+        gap: 8px;
+      }
+
+      .time-value {
+        font-size: 22px;
+      }
+
+      h1 {
+        font-size: 30px;
       }
     }
   </style>
@@ -112,73 +163,106 @@
 
 <body>
   <div class="wrap">
-    <div class="card">
+    <div class="page-card">
       <h1>LiveDeal</h1>
+      <div class="sub">Limited-time offers from MOCAS. When the clock hits zero, the deal disappears.</div>
 
-      <div class="deal-row">
-        <div class="deal-box">
-          <div class="pill">LIVE NOW</div>
-          <div class="deal-text" id="deal-text">
-            Spring special: buy 3 or more items and get 10% off.
-          </div>
-        </div>
-
-        <div class="timer">
-          <div class="timer-grid">
-            <div class="time-unit">
-              <div class="time-value" id="d">--</div>
-              <div class="time-label">D</div>
-            </div>
-            <div class="time-unit">
-              <div class="time-value" id="h">--</div>
-              <div class="time-label">H</div>
-            </div>
-            <div class="time-unit">
-              <div class="time-value" id="m">--</div>
-              <div class="time-label">M</div>
-            </div>
-            <div class="time-unit">
-              <div class="time-value" id="s">--</div>
-              <div class="time-label">S</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <div id="deal-list" class="deal-list"></div>
+      <div id="empty-state" class="empty-state">No live deals right now.</div>
     </div>
   </div>
 
   <script>
-    const END_TIME = new Date("2026-03-31T23:59:59");
+    const DEALS = [
+      {
+        title: "Buy 3 or more BerryFold items, get 10% off",
+        note: "Applies to BerryFold items only.",
+        endTime: "2026-03-31T23:59:59"
+      },
+      {
+        title: "Any 2 Stem Flowers for 15% off",
+        note: "Limited floral deal while supplies last.",
+        endTime: "2026-04-05T20:00:00"
+      },
+      {
+        title: "Free coating on 4+ Poke-Ball items",
+        note: "Coating discount applies automatically at confirmation.",
+        endTime: "2026-04-10T23:59:59"
+      }
+    ];
+
+    const dealList = document.getElementById("deal-list");
+    const emptyState = document.getElementById("empty-state");
 
     function pad(n) {
-      return String(n).padStart(2,'0');
+      return String(n).padStart(2, "0");
     }
 
-    function update() {
-      const now = new Date();
-      const diff = END_TIME - now;
+    function getRemaining(endTime) {
+      const now = Date.now();
+      const end = new Date(endTime).getTime();
+      const diff = end - now;
 
-      if (diff <= 0) {
-        ['d','h','m','s'].forEach(id => document.getElementById(id).textContent = "00");
+      if (diff <= 0) return null;
+
+      const total = Math.floor(diff / 1000);
+      return {
+        d: Math.floor(total / 86400),
+        h: Math.floor((total % 86400) / 3600),
+        m: Math.floor((total % 3600) / 60),
+        s: total % 60
+      };
+    }
+
+    function renderDeals() {
+      const activeDeals = DEALS.filter(deal => getRemaining(deal.endTime));
+
+      if (!activeDeals.length) {
+        dealList.innerHTML = "";
+        emptyState.style.display = "block";
         return;
       }
 
-      const t = Math.floor(diff / 1000);
+      emptyState.style.display = "none";
 
-      const d = Math.floor(t / 86400);
-      const h = Math.floor((t % 86400) / 3600);
-      const m = Math.floor((t % 3600) / 60);
-      const s = t % 60;
+      dealList.innerHTML = activeDeals.map((deal, index) => {
+        const t = getRemaining(deal.endTime);
 
-      document.getElementById('d').textContent = pad(d);
-      document.getElementById('h').textContent = pad(h);
-      document.getElementById('m').textContent = pad(m);
-      document.getElementById('s').textContent = pad(s);
+        return `
+          <div class="deal-card">
+            <div class="deal-box">
+              <div class="pill">LIVE NOW</div>
+              <div class="deal-title">${deal.title}</div>
+              <div class="deal-note">${deal.note || ""}</div>
+            </div>
+
+            <div class="timer">
+              <div class="timer-grid">
+                <div class="time-unit">
+                  <div class="time-value" id="d-${index}">${pad(t.d)}</div>
+                  <div class="time-label">D</div>
+                </div>
+                <div class="time-unit">
+                  <div class="time-value" id="h-${index}">${pad(t.h)}</div>
+                  <div class="time-label">H</div>
+                </div>
+                <div class="time-unit">
+                  <div class="time-value" id="m-${index}">${pad(t.m)}</div>
+                  <div class="time-label">M</div>
+                </div>
+                <div class="time-unit">
+                  <div class="time-value" id="s-${index}">${pad(t.s)}</div>
+                  <div class="time-label">S</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
     }
 
-    update();
-    setInterval(update, 1000);
+    renderDeals();
+    setInterval(renderDeals, 1000);
   </script>
 </body>
 </html>
