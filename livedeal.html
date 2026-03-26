@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MOCAS LiveDeal</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #d94f70;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 32px;
+    }
+
+    .sub {
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .deal-box {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+      align-items: center;
+      margin-top: 18px;
+    }
+
+    .deal-text-box {
+      background: #fff7fa;
+      border: 1px solid #f3c8d4;
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .deal-label {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: white;
+      background: var(--accent);
+      border-radius: 999px;
+      padding: 6px 10px;
+      margin-bottom: 12px;
+    }
+
+    .deal-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .deal-description {
+      color: var(--text);
+      font-size: 17px;
+      line-height: 1.5;
+    }
+
+    .timer-box {
+      background: #0f172a;
+      color: white;
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .timer-heading {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      opacity: 0.8;
+      margin-bottom: 14px;
+    }
+
+    .timer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .time-unit {
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px 8px;
+    }
+
+    .time-value {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .time-label {
+      font-size: 12px;
+      opacity: 0.8;
+      text-transform: uppercase;
+    }
+
+    .expired {
+      margin-top: 16px;
+      font-weight: 700;
+      color: #be123c;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 760px) {
+      .deal-box {
+        grid-template-columns: 1fr;
+      }
+
+      .timer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .time-value {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>LiveDeal</h1>
+      <div class="sub">Limited-time offers from MOCAS. When the clock hits zero, the deal is gone.</div>
+
+      <div class="deal-box">
+        <div class="deal-text-box">
+          <div class="deal-label">LIVE NOW</div>
+          <div class="deal-title" id="deal-title">Buy 3 or more BerryFold items, get 10% off</div>
+          <div class="deal-description" id="deal-description">
+            This deal applies to BerryFold Series items only. Add at least three qualifying items before the timer ends.
+          </div>
+          <div class="footer-note" id="deal-note">
+            Ends tonight. Discount applies manually through order confirmation.
+          </div>
+          <div class="expired" id="expired-message" style="display: none;">
+            This LiveDeal has expired.
+          </div>
+        </div>
+
+        <div class="timer-box">
+          <div class="timer-heading">Time Remaining</div>
+          <div class="timer-grid">
+            <div class="time-unit">
+              <div class="time-value" id="days">00</div>
+              <div class="time-label">Days</div>
+            </div>
+            <div class="time-unit">
+              <div class="time-value" id="hours">00</div>
+              <div class="time-label">Hours</div>
+            </div>
+            <div class="time-unit">
+              <div class="time-value" id="minutes">00</div>
+              <div class="time-label">Minutes</div>
+            </div>
+            <div class="time-unit">
+              <div class="time-value" id="seconds">00</div>
+              <div class="time-label">Seconds</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const LIVE_DEAL = {
+      title: "Buy 3 or more BerryFold items, get 10% off",
+      description: "This deal applies to BerryFold Series items only. Add at least three qualifying items before the timer ends.",
+      note: "Ends tonight. Discount applies manually through order confirmation.",
+      endTime: "2026-03-31T23:59:59"
+    };
+
+    document.getElementById("deal-title").textContent = LIVE_DEAL.title;
+    document.getElementById("deal-description").textContent = LIVE_DEAL.description;
+    document.getElementById("deal-note").textContent = LIVE_DEAL.note;
+
+    const daysEl = document.getElementById("days");
+    const hoursEl = document.getElementById("hours");
+    const minutesEl = document.getElementById("minutes");
+    const secondsEl = document.getElementById("seconds");
+    const expiredMessage = document.getElementById("expired-message");
+
+    function pad(num) {
+      return String(num).padStart(2, "0");
+    }
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const end = new Date(LIVE_DEAL.endTime).getTime();
+      const diff = end - now;
+
+      if (diff <= 0) {
+        daysEl.textContent = "00";
+        hoursEl.textContent = "00";
+        minutesEl.textContent = "00";
+        secondsEl.textContent = "00";
+        expiredMessage.style.display = "block";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      daysEl.textContent = pad(days);
+      hoursEl.textContent = pad(hours);
+      minutesEl.textContent = pad(minutes);
+      secondsEl.textContent = pad(seconds);
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
