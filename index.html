@@ -32,11 +32,11 @@
     }
 
     .wrap {
-      max-width: 1200px;
+      max-width: 1000px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 24px;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
     }
 
     .card {
@@ -44,7 +44,7 @@
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 22px;
+      padding: 16px;
     }
 
     h1, h2, h3 {
@@ -52,7 +52,7 @@
     }
 
     h1 {
-      font-size: 28px;
+      font-size: 24px;
     }
 
     .sub {
@@ -73,9 +73,9 @@
 
     .option-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 10px;
-      margin-top: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
     }
 
     .option-btn,
@@ -89,12 +89,13 @@
     .option-btn {
       width: 100%;
       text-align: left;
-      padding: 12px 14px;
+      padding: 10px 12px;
       border: 1px solid var(--line);
       background: white;
-      border-radius: 14px;
+      border-radius: 12px;
       cursor: pointer;
       transition: 0.18s ease;
+      font-size: 14px;
     }
 
     .option-btn:hover {
