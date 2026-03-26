@@ -273,11 +273,11 @@
 <body>
   <div class="wrap">
     <section class="card">
-      <h1>BerryFold Cart Builder</h1>
-      <div class="sub">Fill your cart here. We will generate a compact order code for you to paste into our Google Form.</div>
+      <h1>MOCAS CartBuilder</h1>
+      <div class="sub">Fill your cart to your desires with our custom-coded interface here! We will generate a compact order code sequence, tailored to you!</div>
 
       <div class="step active" id="step-collection">
-        <h2>Choose from our collections:</h2>
+        <h2>Which collection would you like to shop in?</h2>
         <div class="option-grid" id="collection-options"></div>
       </div>
 
@@ -295,7 +295,7 @@
 
     <aside class="card">
       <h2>Your cart</h2>
-      <div class="muted">Review the items here, then copy the final order code into your Google Form.</div>
+      <div class="muted">Shown below is your current cart. When you're ready, copy the final order code into our Google Form!</div>
 
       <div class="actions">
         <button class="secondary" id="copy-cart-btn" type="button">Copy final order code</button>
@@ -307,7 +307,7 @@
       <div class="totals">
         <div class="totals-row"><span>Pre-Discount Subtotal</span><span id="subtotal">$0.00</span></div>
         <div id="cart-warning" class="warning hidden"></div>
-        <div class="code-line" id="full-cart-code" style="margin-top: 16px;">Cart is empty.</div>
+        <div class="code-line" id="full-cart-code" style="margin-top: 16px;">|empty-cart|.</div>
       </div>
     </aside>
   </div>
@@ -755,11 +755,11 @@
 
     function renderCart() {
       if (!state.cart.length) {
-        cartList.innerHTML = '<div class="muted" style="margin-top: 14px;">No items yet. Your future empire begins with one berry.</div>';
+        cartList.innerHTML = '<div class="muted" style="margin-top: 14px;">No items selected yet. Shop away!</div>';
         subtotalEl.textContent = '$0.00';
         fullCartCode.textContent = 'Cart is empty.';
         cartWarning.classList.remove('hidden');
-        cartWarning.textContent = 'Tip: customers can copy the full cart code here and paste it into your Google Form.';
+        cartWarning.textContent = 'Customers: copy the final order code here and paste it into your Google Form! We will apply all eligible discounts after and contact you about your final transaction.';
         return;
       }
 
