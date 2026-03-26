@@ -246,19 +246,6 @@
       margin-top: 8px;
     }
 
-    .totals-row strong {
-      font-size: 18px;
-    }
-
-    .deal {
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: #ecfeff;
-      color: var(--good);
-      border: 1px solid #a5f3fc;
-    }
-
     .warning {
       margin-top: 10px;
       padding: 10px 12px;
@@ -286,7 +273,7 @@
   <div class="wrap">
     <section class="card">
       <h1>BerryFold Cart Builder</h1>
-      <div class="sub">Fill your cart to your desires here! We will generate a compact order code for you to paste into our Google Form.</div>
+      <div class="sub">Fill your cart here. We will generate a compact order code for you to paste into our Google Form.</div>
 
       <div class="step active" id="step-collection">
         <h2>Choose from our collections:</h2>
@@ -308,7 +295,7 @@
 
     <aside class="card">
       <h2>Your cart</h2>
-      <div class="muted">This is the running order list your customer can review before copying the final cart text into your Google Form.</div>
+      <div class="muted">Review the items here, then copy the final order code into your Google Form.</div>
 
       <div class="actions">
         <button class="secondary" id="copy-cart-btn" type="button">Copy final order code</button>
@@ -319,7 +306,6 @@
 
       <div class="totals">
         <div class="totals-row"><span>Pre-Discount Subtotal</span><span id="subtotal">$0.00</span></div>
-        <div id="deal-box" class="deal hidden"></div>
         <div id="cart-warning" class="warning hidden"></div>
         <div class="code-line" id="full-cart-code" style="margin-top: 16px;">Cart is empty.</div>
       </div>
@@ -344,7 +330,7 @@
           gdk: 11.0,
           ult: 11.0
         },
-        flowerBase: 5.00,
+        flowerBase: 5.0,
         keychainGold: 1.5,
         keychainSilver: 1.5,
         coatingBerry: 1.0,
@@ -400,7 +386,6 @@
     const builderCode = document.getElementById('builder-code');
     const cartList = document.getElementById('cart-list');
     const subtotalEl = document.getElementById('subtotal');
-    const dealBox = document.getElementById('deal-box');
     const fullCartCode = document.getElementById('full-cart-code');
     const cartWarning = document.getElementById('cart-warning');
 
@@ -412,10 +397,25 @@
       return list.find(item => item.id === id);
     }
 
+    function escapeHtmlAttr(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function sanitizeText(text) {
+      return String(text || '')
+        .trim()
+        .replace(/[^0-9]/g, '')
+        .slice(0, 2);
+    }
+
     function renderCollectionOptions() {
       collectionOptions.innerHTML = CONFIG.collections.map(c => `
         <button class="option-btn ${state.builder.collection === c.id ? 'selected' : ''}" type="button" onclick="selectCollection('${c.id}')">
-          <strong>${c.name}</strong><br>
+          <strong>${c.name}</strong>
         </button>
       `).join('');
     }
@@ -433,7 +433,7 @@
         <div class="option-grid">
           ${list.map(item => `
             <button class="option-btn ${selectedValue === item.id ? 'selected' : ''}" type="button" onclick="${setterName}('${item.id}')">
-              <strong>${item.name}</strong><br>
+              <strong>${item.name}</strong>
             </button>
           `).join('')}
         </div>
@@ -445,49 +445,13 @@
         <h2>${title}</h2>
         <div class="option-grid">
           <button class="option-btn ${currentValue === 'y' ? 'selected' : ''}" type="button" onclick="${setterName}('y')">
-            <strong>Yes</strong><br>
+            <strong>Yes</strong>
           </button>
           <button class="option-btn ${currentValue === 'n' ? 'selected' : ''}" type="button" onclick="${setterName}('n')">
-            <strong>No</strong><br>
+            <strong>No</strong>
           </button>
         </div>
       `;
-    }
-
-    function renderConfigStep() {
-      const c = state.builder.collection;
-      if (!c) return;
-
-      stepConfig.classList.add('active');
-
-      if (c === 'bf') {
-        stepConfig.innerHTML = `
-          ${optionButtons('2. Which BerryFold model would you like?', CONFIG.berryModels, state.builder.model, 'setBerryModel')}
-          ${state.builder.model ? optionButtons('3. Would you like to turn it into a keychain?', CONFIG.keychainOptions, state.builder.keychain, 'setBerryKeychain') : ''}
-          ${state.builder.model && state.builder.keychain ? yesNoButtons('4. Would you like to add a resistance coating?', state.builder.coating, 'setBerryCoating') : ''}
-          ${state.builder.model && state.builder.keychain && state.builder.coating ? quantityAndNoteFields('5. Quantity and optional note', state.builder.qty, state.builder.note, 'setBuilderQty', 'setBuilderNote') : ''}
-        `;
-      }
-
-      if (c === 'pb') {
-        stepConfig.innerHTML = `
-          ${optionButtons('2. Which Poke-Ball model would you like?', CONFIG.ballModels, state.builder.model, 'setBallModel')}
-          ${state.builder.model ? yesNoButtons('3. Would you like to add a resistance coating?', state.builder.coating, 'setBallCoating') : ''}
-          ${state.builder.model && state.builder.coating ? quantityAndNoteFields('4. Quantity and optional note', state.builder.qty, state.builder.note, 'setBuilderQty', 'setBuilderNote') : ''}
-        `;
-      }
-
-      if (c === 'sf') {
-        stepConfig.innerHTML = `
-          ${dropdownField('2. What color petal would you like?', CONFIG.colors, state.builder.petal, 'setFlowerPetal')}
-          ${state.builder.petal ? dropdownField('3. What color core would you like?', CONFIG.colors, state.builder.core, 'setFlowerCore') : ''}
-          ${state.builder.petal && state.builder.core ? dropdownField('4. What color stem would you like?', CONFIG.colors, state.builder.stem, 'setFlowerStem') : ''}
-          ${state.builder.petal && state.builder.core && state.builder.stem ? yesNoButtons('5. Would you like to add a resistance coating?', state.builder.coating, 'setFlowerCoating') : ''}
-          ${state.builder.petal && state.builder.core && state.builder.stem && state.builder.coating ? quantityAndNoteFields('6. Quantity and optional note', state.builder.qty, state.builder.note, 'setBuilderQty', 'setBuilderNote') : ''}
-        `;
-      }
-
-      maybeRenderPreview();
     }
 
     function dropdownField(title, options, selectedValue, setterName) {
@@ -507,66 +471,111 @@
       `;
     }
 
-    function quantityAndNoteFields(title, qty, note, qtySetter, noteSetter) {
+    function quantityFields(title, qtyChoice, customQtyText, qtySetter, customSetter) {
       return `
         <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
           <h2>${title}</h2>
           <div class="field-row">
             <div class="field">
               <label>Quantity</label>
-              <input type="number" min="1" max="99" value="${qty || 1}" oninput="${qtySetter}(this.value)" />
+              <select onchange="${qtySetter}(this.value)">
+                <option value="">Choose...</option>
+                <option value="1" ${qtyChoice === '1' ? 'selected' : ''}>x1</option>
+                <option value="2" ${qtyChoice === '2' ? 'selected' : ''}>x2</option>
+                <option value="3" ${qtyChoice === '3' ? 'selected' : ''}>x3</option>
+                <option value="other" ${qtyChoice === 'other' ? 'selected' : ''}>Other</option>
+              </select>
             </div>
+            ${qtyChoice === 'other' ? `
             <div class="field">
-              <label>Optional note</label>
-              <input type="text" maxlength="40" placeholder="Short note for Google Form" value="${escapeHtmlAttr(note || '')}" oninput="${noteSetter}(this.value)" />
+              <label>Custom quantity</label>
+              <input
+                type="number"
+                min="4"
+                max="99"
+                placeholder="4-99"
+                value="${escapeHtmlAttr(customQtyText || '')}"
+                oninput="${customSetter}(this.value)"
+              />
             </div>
+            ` : ''}
           </div>
         </div>
       `;
     }
 
-    function escapeHtmlAttr(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    }
+    function renderConfigStep() {
+      const c = state.builder.collection;
+      if (!c) return;
 
-    function sanitizeNote(note) {
-      return (note || '')
-        .trim()
-        .replace(/\s+/g, '_')
-        .replace(/[^a-zA-Z0-9_\-]/g, '')
-        .slice(0, 40);
+      stepConfig.classList.add('active');
+
+      if (c === 'bf') {
+        stepConfig.innerHTML = `
+          ${optionButtons('2. Which BerryFold model would you like?', CONFIG.berryModels, state.builder.model, 'setBerryModel')}
+          ${state.builder.model ? optionButtons('3. Would you like to turn it into a keychain?', CONFIG.keychainOptions, state.builder.keychain, 'setBerryKeychain') : ''}
+          ${state.builder.model && state.builder.keychain ? yesNoButtons('4. Would you like to add a resistance coating?', state.builder.coating, 'setBerryCoating') : ''}
+          ${state.builder.model && state.builder.keychain && state.builder.coating ? quantityFields('5. Quantity', state.builder.qtyChoice, state.builder.customText, 'setBuilderQtyChoice', 'setBuilderCustomText') : ''}
+        `;
+      }
+
+      if (c === 'pb') {
+        stepConfig.innerHTML = `
+          ${optionButtons('2. Which Poke-Ball model would you like?', CONFIG.ballModels, state.builder.model, 'setBallModel')}
+          ${state.builder.model ? yesNoButtons('3. Would you like to add a resistance coating?', state.builder.coating, 'setBallCoating') : ''}
+          ${state.builder.model && state.builder.coating ? quantityFields('4. Quantity', state.builder.qtyChoice, state.builder.customText, 'setBuilderQtyChoice', 'setBuilderCustomText') : ''}
+        `;
+      }
+
+      if (c === 'sf') {
+        stepConfig.innerHTML = `
+          ${dropdownField('2. What color petal would you like?', CONFIG.colors, state.builder.petal, 'setFlowerPetal')}
+          ${state.builder.petal ? dropdownField('3. What color core would you like?', CONFIG.colors, state.builder.core, 'setFlowerCore') : ''}
+          ${state.builder.petal && state.builder.core ? dropdownField('4. What color stem would you like?', CONFIG.colors, state.builder.stem, 'setFlowerStem') : ''}
+          ${state.builder.petal && state.builder.core && state.builder.stem ? yesNoButtons('5. Would you like to add a resistance coating?', state.builder.coating, 'setFlowerCoating') : ''}
+          ${state.builder.petal && state.builder.core && state.builder.stem && state.builder.coating ? quantityFields('6. Quantity', state.builder.qtyChoice, state.builder.customText, 'setBuilderQtyChoice', 'setBuilderCustomText') : ''}
+        `;
+      }
+
+      maybeRenderPreview();
     }
 
     function setBerryModel(id) {
       state.builder.model = id;
       delete state.builder.keychain;
       delete state.builder.coating;
+      delete state.builder.qtyChoice;
+      delete state.builder.customText;
       renderConfigStep();
     }
 
     function setBerryKeychain(id) {
       state.builder.keychain = id;
       delete state.builder.coating;
+      delete state.builder.qtyChoice;
+      delete state.builder.customText;
       renderConfigStep();
     }
 
     function setBerryCoating(val) {
       state.builder.coating = val;
+      delete state.builder.qtyChoice;
+      delete state.builder.customText;
       renderConfigStep();
     }
 
     function setBallModel(id) {
       state.builder.model = id;
       delete state.builder.coating;
+      delete state.builder.qtyChoice;
+      delete state.builder.customText;
       renderConfigStep();
     }
 
     function setBallCoating(val) {
       state.builder.coating = val;
+      delete state.builder.qtyChoice;
+      delete state.builder.customText;
       renderConfigStep();
     }
 
@@ -575,6 +584,8 @@
       delete state.builder.core;
       delete state.builder.stem;
       delete state.builder.coating;
+      delete state.builder.qtyChoice;
+      delete state.builder.customText;
       renderConfigStep();
     }
 
@@ -582,43 +593,72 @@
       state.builder.core = id;
       delete state.builder.stem;
       delete state.builder.coating;
+      delete state.builder.qtyChoice;
+      delete state.builder.customText;
       renderConfigStep();
     }
 
     function setFlowerStem(id) {
       state.builder.stem = id;
       delete state.builder.coating;
+      delete state.builder.qtyChoice;
+      delete state.builder.customText;
       renderConfigStep();
     }
 
     function setFlowerCoating(val) {
       state.builder.coating = val;
+      delete state.builder.qtyChoice;
+      delete state.builder.customText;
       renderConfigStep();
     }
 
-    function setBuilderQty(val) {
-      const n = Math.max(1, Math.min(99, Number(val) || 1));
-      state.builder.qty = n;
-      maybeRenderPreview();
+    function setBuilderQtyChoice(val) {
+      state.builder.qtyChoice = val;
+      if (val !== 'other') {
+        delete state.builder.customText;
+      }
+      renderConfigStep();
     }
 
-    function setBuilderNote(val) {
-      state.builder.note = val;
+    function setBuilderCustomText(val) {
+      state.builder.customText = val;
       maybeRenderPreview();
     }
 
     function builderComplete() {
       const b = state.builder;
-      if (b.collection === 'bf') return !!(b.model && b.keychain && b.coating && b.qty);
-      if (b.collection === 'pb') return !!(b.model && b.coating && b.qty);
-      if (b.collection === 'sf') return !!(b.petal && b.core && b.stem && b.coating && b.qty);
+      if (!b.qtyChoice) return false;
+      if (b.qtyChoice === 'other') {
+        const n = Number(sanitizeText(b.customText));
+        if (!n || n < 4 || n > 99) return false;
+      }
+      if (b.collection === 'bf') return !!(b.model && b.keychain && b.coating);
+      if (b.collection === 'pb') return !!(b.model && b.coating);
+      if (b.collection === 'sf') return !!(b.petal && b.core && b.stem && b.coating);
       return false;
     }
 
     function buildItemFromBuilder() {
       const b = state.builder;
-      const qty = Number(b.qty) || 1;
-      const note = sanitizeNote(b.note);
+      const qtyChoice = b.qtyChoice || '1';
+      const customText = sanitizeText(b.customText);
+
+      let qty = 1;
+      let qtyCode = '';
+      let qtyLabel = '';
+      let customPricing = false;
+
+      if (qtyChoice === 'other') {
+        qty = Number(customText);
+        qtyCode = customText ? `q${qty}` : 'q4';
+        qtyLabel = `Quantity: ${qty}`;
+        customPricing = false;
+      } else {
+        qty = Number(qtyChoice);
+        qtyCode = `q${qty}`;
+        qtyLabel = `Quantity: ${qty}`;
+      }
 
       if (b.collection === 'bf') {
         const model = byId(CONFIG.berryModels, b.model);
@@ -628,14 +668,15 @@
           + (b.keychain === 'glk' ? CONFIG.pricing.keychainGold : 0)
           + (b.keychain === 'sik' ? CONFIG.pricing.keychainSilver : 0)
           + (b.coating === 'y' ? CONFIG.pricing.coatingBerry : 0);
-        const code = ['bf', b.model, b.keychain, b.coating, `q${qty}`, note ? `t${note}` : null].filter(Boolean).join('-');
         return {
           collection: 'MOCAS BerryFold Series',
           label: `${model.name} • ${keychain.name} • ${coatingLabel}`,
-          code,
+          code: ['bf', b.model, b.keychain, b.coating, qtyCode].join('-'),
           qty,
+          qtyLabel,
           unitPrice,
-          linePrice: unitPrice * qty
+          linePrice: customPricing ? null : unitPrice * qty,
+          customPricing
         };
       }
 
@@ -644,14 +685,15 @@
         const coatingLabel = b.coating === 'y' ? 'Coated' : 'Uncoated';
         const unitPrice = CONFIG.pricing.pokeballBase[b.model]
           + (b.coating === 'y' ? CONFIG.pricing.coatingBall : 0);
-        const code = ['pb', b.model, b.coating, `q${qty}`, note ? `t${note}` : null].filter(Boolean).join('-');
         return {
           collection: 'MOCAS Poke-Ball Assortment',
           label: `${model.name} • ${coatingLabel}`,
-          code,
+          code: ['pb', b.model, b.coating, qtyCode].join('-'),
           qty,
+          qtyLabel,
           unitPrice,
-          linePrice: unitPrice * qty
+          linePrice: customPricing ? null : unitPrice * qty,
+          customPricing
         };
       }
 
@@ -660,14 +702,15 @@
       const stem = byId(CONFIG.colors, b.stem);
       const coatingLabel = b.coating === 'y' ? 'Coated' : 'Uncoated';
       const unitPrice = CONFIG.pricing.flowerBase + (b.coating === 'y' ? CONFIG.pricing.coatingFlower : 0);
-      const code = ['sf', b.petal, b.core, b.stem, b.coating, `q${qty}`, note ? `t${note}` : null].filter(Boolean).join('-');
       return {
         collection: 'MOCAS Stem Flower Selection',
         label: `Petal ${petal.name} • Core ${core.name} • Stem ${stem.name} • ${coatingLabel}`,
-        code,
+        code: ['sf', b.petal, b.core, b.stem, b.coating, qtyCode].join('-'),
         qty,
+        qtyLabel,
         unitPrice,
-        linePrice: unitPrice * qty
+        linePrice: customPricing ? null : unitPrice * qty,
+        customPricing
       };
     }
 
@@ -677,7 +720,7 @@
         return;
       }
       const item = buildItemFromBuilder();
-      builderText.innerHTML = `<strong>${item.collection}</strong><br>${item.label}<br>Quantity: ${item.qty}<br>Unit price: ${money(item.unitPrice)}<br>Line total: ${money(item.linePrice)}`;
+      builderText.innerHTML = `<strong>${item.collection}</strong><br>${item.label}<br>${item.qtyLabel}<br>Unit price: ${money(item.unitPrice)}<br>Line total: ${money(item.linePrice)}`;
       builderCode.textContent = item.code;
       builderSummary.classList.remove('hidden');
     }
@@ -708,12 +751,8 @@
     }
 
     function cartTotals() {
-      const subtotal = state.cart.reduce((sum, item) => sum + item.linePrice, 0);
-      const totalQty = state.cart.reduce((sum, item) => sum + item.qty, 0);
-      return {
-        subtotal,
-        totalQty,
-      };
+      const subtotal = state.cart.reduce((sum, item) => sum + (item.linePrice || 0), 0);
+      return { subtotal };
     }
 
     function renderCart() {
@@ -732,10 +771,11 @@
             <div>
               <div class="pill">${item.collection}</div>
               <div><strong>${item.label}</strong></div>
-              <div class="muted">Qty ${item.qty} • ${money(item.unitPrice)} each</div>
+              <div class="muted">${item.qtyLabel} • ${money(item.unitPrice)} each</div>
             </div>
             <div class="item-price">${money(item.linePrice)}</div>
           </div>
+          <div class="cart-code">${item.code}</div>
           <div class="cart-controls">
             <button class="danger" type="button" onclick="removeCartItem(${index})">Remove item</button>
           </div>
@@ -744,7 +784,6 @@
 
       const totals = cartTotals();
       subtotalEl.textContent = money(totals.subtotal);
-
       cartWarning.classList.add('hidden');
       fullCartCode.textContent = state.cart.map((item, i) => `${i + 1}.${item.code}`).join(' | ');
     }
@@ -776,8 +815,8 @@
     window.setFlowerCore = setFlowerCore;
     window.setFlowerStem = setFlowerStem;
     window.setFlowerCoating = setFlowerCoating;
-    window.setBuilderQty = setBuilderQty;
-    window.setBuilderNote = setBuilderNote;
+    window.setBuilderQtyChoice = setBuilderQtyChoice;
+    window.setBuilderCustomText = setBuilderCustomText;
     window.removeCartItem = removeCartItem;
     window.copyText = copyText;
   </script>
