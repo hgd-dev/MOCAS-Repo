@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BerryFold Cart Builder</title>
+  <title>MOCAS Official CartBuilder</title>
   <style>
     :root {
       --bg: #f6f7fb;
@@ -757,7 +757,7 @@
       if (!state.cart.length) {
         cartList.innerHTML = '<div class="muted" style="margin-top: 14px;">No items selected yet. Shop away!</div>';
         subtotalEl.textContent = '$0.00';
-        fullCartCode.textContent = 'Cart is empty.';
+        fullCartCode.textContent = '[Cart empty]';
         cartWarning.classList.remove('hidden');
         cartWarning.textContent = 'Customers: copy the final order code here and paste it into your Google Form! We will apply all eligible discounts after and contact you about your final transaction.';
         return;
