@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BerryFold Cart Builder</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #d94f70;
+      --accent-2: #f3f4f6;
+      --good: #0f766e;
+      --warn: #b45309;
+      --danger: #b91c1c;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.4;
+      padding: 24px;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 10px;
+    }
+
+    h1 {
+      font-size: 28px;
+    }
+
+    .sub {
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .step {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .option-btn,
+    button,
+    select,
+    input[type="number"],
+    input[type="text"] {
+      font: inherit;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .option-btn:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .option-btn.selected {
+      background: #fff1f4;
+      border-color: var(--accent);
+      color: #7c2136;
+      font-weight: 700;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-weight: 700;
+    }
+
+    select, input[type="number"], input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 12px;
+      background: white;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .secondary {
+      background: var(--accent-2);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .danger {
+      background: #fee2e2;
+      color: var(--danger);
+      border: 1px solid #fecaca;
+    }
+
+    .summary-box {
+      background: #fafafa;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 16px;
+    }
+
+    .code-line {
+      background: #111827;
+      color: #f9fafb;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-family: Consolas, Monaco, monospace;
+      word-break: break-word;
+      margin-top: 12px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .cart-item {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 12px;
+      background: white;
+    }
+
+    .cart-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 4px 8px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    .item-price {
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .cart-code {
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13px;
+      color: #374151;
+      margin-top: 8px;
+      word-break: break-word;
+    }
+
+    .cart-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .totals {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .totals-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    .totals-row strong {
+      font-size: 18px;
+    }
+
+    .deal {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #ecfeff;
+      color: var(--good);
+      border: 1px solid #a5f3fc;
+    }
+
+    .warning {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #fff7ed;
+      color: var(--warn);
+      border: 1px solid #fed7aa;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .wrap {
+        grid-template-columns: 1fr;
+      }
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="card">
+      <h1>BerryFold Cart Builder</h1>
+      <div class="sub">Build a custom order, generate a compact order code, then let customers paste that code into your Google Form.</div>
+
+      <div class="step active" id="step-collection">
+        <h2>1. Choose a collection</h2>
+        <div class="option-grid" id="collection-options"></div>
+      </div>
+
+      <div class="step" id="step-config"></div>
+
+      <div class="summary-box hidden" id="builder-summary">
+        <h3>Current item preview</h3>
+        <div id="builder-text" class="muted"></div>
+        <div class="code-line" id="builder-code"></div>
+        <div class="actions">
+          <button class="primary" id="add-to-cart-btn">Add item to cart</button>
+          <button class="secondary" id="copy-code-btn" type="button">Copy code</button>
+          <button class="secondary" id="reset-builder-btn" type="button">Start over</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <h2>Your cart</h2>
+      <div class="muted">This is the running order list your customer can review before copying the final cart text into your Google Form.</div>
+
+      <div class="actions">
+        <button class="secondary" id="copy-cart-btn" type="button">Copy full cart</button>
+        <button class="danger" id="clear-cart-btn" type="button">Clear cart</button>
+      </div>
+
+      <div id="cart-list"></div>
+
+      <div class="totals">
+        <div class="totals-row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+        <div class="totals-row"><span>Discount</span><span id="discount">-$0.00</span></div>
+        <div class="totals-row"><strong>Total</strong><strong id="total">$0.00</strong></div>
+        <div id="deal-box" class="deal hidden"></div>
+        <div id="cart-warning" class="warning hidden"></div>
+        <div class="code-line" id="full-cart-code" style="margin-top: 16px;">Cart is empty.</div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    const CONFIG = {
+      pricing: {
+        berryBase: {
+          sky: 8.5,
+          sun: 8.5,
+          lva: 8.5,
+          dgn: 8.5,
+          rby: 8.5,
+          ngt: 9.5,
+          lea: 9.0
+        },
+        pokeballBase: {
+          reg: 9.0,
+          gli: 10.0,
+          gdk: 10.0,
+          ult: 11.0
+        },
+        flowerBase: 7.5,
+        keychainGold: 1.5,
+        keychainSilver: 1.25,
+        coatingBerry: 1.0,
+        coatingBall: 1.25,
+        coatingFlower: 1.0
+      },
+      deals: {
+        quantity3PlusPercent: 0.08,
+        quantity5PlusPercent: 0.12
+      },
+      collections: [
+        { id: 'bf', name: 'BerryFold Series' },
+        { id: 'pb', name: 'Poke-Ball Selection' },
+        { id: 'sf', name: 'Stem Flower Series' }
+      ],
+      berryModels: [
+        { id: 'sky', name: 'SkyBerry (cyan)' },
+        { id: 'sun', name: 'SunBerry (yellow)' },
+        { id: 'lva', name: 'LavaBerry (orange)' },
+        { id: 'dgn', name: 'DragonBerry (pink)' },
+        { id: 'rby', name: 'RubyBerry (red)' },
+        { id: 'ngt', name: 'NightBerry (navy)' },
+        { id: 'lea', name: 'LeafBerry (forest)' }
+      ],
+      keychainOptions: [
+        { id: 'nll', name: 'No keychain' },
+        { id: 'glk', name: 'Golden' },
+        { id: 'sik', name: 'Silver' }
+      ],
+      ballModels: [
+        { id: 'reg', name: 'Regular' },
+        { id: 'gli', name: 'Great Ball (light)' },
+        { id: 'gdk', name: 'Great Ball (dark)' },
+        { id: 'ult', name: 'Ultra Ball' }
+      ],
+      colors: [
+        { id: 'pi', name: 'Pink' },
+        { id: 're', name: 'Red' },
+        { id: 'or', name: 'Orange' },
+        { id: 'ye', name: 'Yellow' },
+        { id: 'lg', name: 'Light green' },
+        { id: 'dg', name: 'Dark green' },
+        { id: 'lb', name: 'Light blue' },
+        { id: 'db', name: 'Dark blue' }
+      ]
+    };
+
+    const state = {
+      builder: {},
+      cart: []
+    };
+
+    const collectionOptions = document.getElementById('collection-options');
+    const stepConfig = document.getElementById('step-config');
+    const builderSummary = document.getElementById('builder-summary');
+    const builderText = document.getElementById('builder-text');
+    const builderCode = document.getElementById('builder-code');
+    const cartList = document.getElementById('cart-list');
+    const subtotalEl = document.getElementById('subtotal');
+    const discountEl = document.getElementById('discount');
+    const totalEl = document.getElementById('total');
+    const dealBox = document.getElementById('deal-box');
+    const fullCartCode = document.getElementById('full-cart-code');
+    const cartWarning = document.getElementById('cart-warning');
+
+    function money(n) {
+      return `$${n.toFixed(2)}`;
+    }
+
+    function byId(list, id) {
+      return list.find(item => item.id === id);
+    }
+
+    function renderCollectionOptions() {
+      collectionOptions.innerHTML = CONFIG.collections.map(c => `
+        <button class="option-btn ${state.builder.collection === c.id ? 'selected' : ''}" type="button" onclick="selectCollection('${c.id}')">
+          <strong>${c.name}</strong><br>
+          <span class="muted">Code: [${c.id}]</span>
+        </button>
+      `).join('');
+    }
+
+    function selectCollection(id) {
+      state.builder = { collection: id };
+      renderCollectionOptions();
+      renderConfigStep();
+      builderSummary.classList.add('hidden');
+    }
+
+    function optionButtons(title, list, selectedValue, setterName) {
+      return `
+        <h2>${title}</h2>
+        <div class="option-grid">
+          ${list.map(item => `
+            <button class="option-btn ${selectedValue === item.id ? 'selected' : ''}" type="button" onclick="${setterName}('${item.id}')">
+              <strong>${item.name}</strong><br>
+              <span class="muted">[${item.id}]</span>
+            </button>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function yesNoButtons(title, currentValue, setterName) {
+      return `
+        <h2>${title}</h2>
+        <div class="option-grid">
+          <button class="option-btn ${currentValue === 'y' ? 'selected' : ''}" type="button" onclick="${setterName}('y')">
+            <strong>Yes</strong><br><span class="muted">[y]</span>
+          </button>
+          <button class="option-btn ${currentValue === 'n' ? 'selected' : ''}" type="button" onclick="${setterName}('n')">
+            <strong>No</strong><br><span class="muted">[n]</span>
+          </button>
+        </div>
+      `;
+    }
+
+    function renderConfigStep() {
+      const c = state.builder.collection;
+      if (!c) return;
+
+      stepConfig.classList.add('active');
+
+      if (c === 'bf') {
+        stepConfig.innerHTML = `
+          ${optionButtons('2. Choose a BerryFold model', CONFIG.berryModels, state.builder.model, 'setBerryModel')}
+          ${state.builder.model ? optionButtons('3. Turn it into a keychain?', CONFIG.keychainOptions, state.builder.keychain, 'setBerryKeychain') : ''}
+          ${state.builder.model && state.builder.keychain ? yesNoButtons('4. Add resistance coating?', state.builder.coating, 'setBerryCoating') : ''}
+          ${state.builder.model && state.builder.keychain && state.builder.coating ? quantityAndNoteFields('5. Quantity and optional note', state.builder.qty, state.builder.note, 'setBuilderQty', 'setBuilderNote') : ''}
+        `;
+      }
+
+      if (c === 'pb') {
+        stepConfig.innerHTML = `
+          ${optionButtons('2. Choose a Poke-Ball model', CONFIG.ballModels, state.builder.model, 'setBallModel')}
+          ${state.builder.model ? yesNoButtons('3. Add resistance coating?', state.builder.coating, 'setBallCoating') : ''}
+          ${state.builder.model && state.builder.coating ? quantityAndNoteFields('4. Quantity and optional note', state.builder.qty, state.builder.note, 'setBuilderQty', 'setBuilderNote') : ''}
+        `;
+      }
+
+      if (c === 'sf') {
+        stepConfig.innerHTML = `
+          ${dropdownField('2. Select petal color', CONFIG.colors, state.builder.petal, 'setFlowerPetal')}
+          ${state.builder.petal ? dropdownField('3. Select core color', CONFIG.colors, state.builder.core, 'setFlowerCore') : ''}
+          ${state.builder.petal && state.builder.core ? dropdownField('4. Select stem color', CONFIG.colors, state.builder.stem, 'setFlowerStem') : ''}
+          ${state.builder.petal && state.builder.core && state.builder.stem ? yesNoButtons('5. Add resistance coating?', state.builder.coating, 'setFlowerCoating') : ''}
+          ${state.builder.petal && state.builder.core && state.builder.stem && state.builder.coating ? quantityAndNoteFields('6. Quantity and optional note', state.builder.qty, state.builder.note, 'setBuilderQty', 'setBuilderNote') : ''}
+        `;
+      }
+
+      maybeRenderPreview();
+    }
+
+    function dropdownField(title, options, selectedValue, setterName) {
+      return `
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
+          <h2>${title}</h2>
+          <div class="field-row">
+            <div class="field">
+              <label>Select an option</label>
+              <select onchange="${setterName}(this.value)">
+                <option value="">Choose one...</option>
+                ${options.map(opt => `<option value="${opt.id}" ${selectedValue === opt.id ? 'selected' : ''}>${opt.name} [${opt.id}]</option>`).join('')}
+              </select>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function quantityAndNoteFields(title, qty, note, qtySetter, noteSetter) {
+      return `
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
+          <h2>${title}</h2>
+          <div class="field-row">
+            <div class="field">
+              <label>Quantity</label>
+              <input type="number" min="1" max="99" value="${qty || 1}" oninput="${qtySetter}(this.value)" />
+            </div>
+            <div class="field">
+              <label>Optional note</label>
+              <input type="text" maxlength="40" placeholder="Short note for Google Form" value="${escapeHtmlAttr(note || '')}" oninput="${noteSetter}(this.value)" />
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function escapeHtmlAttr(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function sanitizeNote(note) {
+      return (note || '')
+        .trim()
+        .replace(/\s+/g, '_')
+        .replace(/[^a-zA-Z0-9_\-]/g, '')
+        .slice(0, 40);
+    }
+
+    function setBerryModel(id) {
+      state.builder.model = id;
+      delete state.builder.keychain;
+      delete state.builder.coating;
+      renderConfigStep();
+    }
+
+    function setBerryKeychain(id) {
+      state.builder.keychain = id;
+      delete state.builder.coating;
+      renderConfigStep();
+    }
+
+    function setBerryCoating(val) {
+      state.builder.coating = val;
+      renderConfigStep();
+    }
+
+    function setBallModel(id) {
+      state.builder.model = id;
+      delete state.builder.coating;
+      renderConfigStep();
+    }
+
+    function setBallCoating(val) {
+      state.builder.coating = val;
+      renderConfigStep();
+    }
+
+    function setFlowerPetal(id) {
+      state.builder.petal = id;
+      delete state.builder.core;
+      delete state.builder.stem;
+      delete state.builder.coating;
+      renderConfigStep();
+    }
+
+    function setFlowerCore(id) {
+      state.builder.core = id;
+      delete state.builder.stem;
+      delete state.builder.coating;
+      renderConfigStep();
+    }
+
+    function setFlowerStem(id) {
+      state.builder.stem = id;
+      delete state.builder.coating;
+      renderConfigStep();
+    }
+
+    function setFlowerCoating(val) {
+      state.builder.coating = val;
+      renderConfigStep();
+    }
+
+    function setBuilderQty(val) {
+      const n = Math.max(1, Math.min(99, Number(val) || 1));
+      state.builder.qty = n;
+      maybeRenderPreview();
+    }
+
+    function setBuilderNote(val) {
+      state.builder.note = val;
+      maybeRenderPreview();
+    }
+
+    function builderComplete() {
+      const b = state.builder;
+      if (b.collection === 'bf') return !!(b.model && b.keychain && b.coating && b.qty);
+      if (b.collection === 'pb') return !!(b.model && b.coating && b.qty);
+      if (b.collection === 'sf') return !!(b.petal && b.core && b.stem && b.coating && b.qty);
+      return false;
+    }
+
+    function buildItemFromBuilder() {
+      const b = state.builder;
+      const qty = Number(b.qty) || 1;
+      const note = sanitizeNote(b.note);
+
+      if (b.collection === 'bf') {
+        const model = byId(CONFIG.berryModels, b.model);
+        const keychain = byId(CONFIG.keychainOptions, b.keychain);
+        const coatingLabel = b.coating === 'y' ? 'Coated' : 'Uncoated';
+        const unitPrice = CONFIG.pricing.berryBase[b.model]
+          + (b.keychain === 'glk' ? CONFIG.pricing.keychainGold : 0)
+          + (b.keychain === 'sik' ? CONFIG.pricing.keychainSilver : 0)
+          + (b.coating === 'y' ? CONFIG.pricing.coatingBerry : 0);
+        const code = ['bf', b.model, b.keychain, b.coating, `q${qty}`, note ? `t${note}` : null].filter(Boolean).join('-');
+        return {
+          collection: 'BerryFold Series',
+          label: `${model.name} • ${keychain.name} • ${coatingLabel}`,
+          code,
+          qty,
+          unitPrice,
+          linePrice: unitPrice * qty
+        };
+      }
+
+      if (b.collection === 'pb') {
+        const model = byId(CONFIG.ballModels, b.model);
+        const coatingLabel = b.coating === 'y' ? 'Coated' : 'Uncoated';
+        const unitPrice = CONFIG.pricing.pokeballBase[b.model]
+          + (b.coating === 'y' ? CONFIG.pricing.coatingBall : 0);
+        const code = ['pb', b.model, b.coating, `q${qty}`, note ? `t${note}` : null].filter(Boolean).join('-');
+        return {
+          collection: 'Poke-Ball Selection',
+          label: `${model.name} • ${coatingLabel}`,
+          code,
+          qty,
+          unitPrice,
+          linePrice: unitPrice * qty
+        };
+      }
+
+      const petal = byId(CONFIG.colors, b.petal);
+      const core = byId(CONFIG.colors, b.core);
+      const stem = byId(CONFIG.colors, b.stem);
+      const coatingLabel = b.coating === 'y' ? 'Coated' : 'Uncoated';
+      const unitPrice = CONFIG.pricing.flowerBase + (b.coating === 'y' ? CONFIG.pricing.coatingFlower : 0);
+      const code = ['sf', b.petal, b.core, b.stem, b.coating, `q${qty}`, note ? `t${note}` : null].filter(Boolean).join('-');
+      return {
+        collection: 'Stem Flower Series',
+        label: `Petal ${petal.name} • Core ${core.name} • Stem ${stem.name} • ${coatingLabel}`,
+        code,
+        qty,
+        unitPrice,
+        linePrice: unitPrice * qty
+      };
+    }
+
+    function maybeRenderPreview() {
+      if (!builderComplete()) {
+        builderSummary.classList.add('hidden');
+        return;
+      }
+      const item = buildItemFromBuilder();
+      builderText.innerHTML = `<strong>${item.collection}</strong><br>${item.label}<br>Quantity: ${item.qty}<br>Unit price: ${money(item.unitPrice)}<br>Line total: ${money(item.linePrice)}`;
+      builderCode.textContent = item.code;
+      builderSummary.classList.remove('hidden');
+    }
+
+    function addToCart() {
+      if (!builderComplete()) return;
+      state.cart.push(buildItemFromBuilder());
+      renderCart();
+      resetBuilder();
+    }
+
+    function resetBuilder() {
+      state.builder = {};
+      renderCollectionOptions();
+      stepConfig.classList.remove('active');
+      stepConfig.innerHTML = '';
+      builderSummary.classList.add('hidden');
+    }
+
+    function removeCartItem(index) {
+      state.cart.splice(index, 1);
+      renderCart();
+    }
+
+    function clearCart() {
+      state.cart = [];
+      renderCart();
+    }
+
+    function cartTotals() {
+      const subtotal = state.cart.reduce((sum, item) => sum + item.linePrice, 0);
+      const totalQty = state.cart.reduce((sum, item) => sum + item.qty, 0);
+      let discount = 0;
+      let dealText = '';
+
+      if (totalQty >= 5) {
+        discount = subtotal * CONFIG.deals.quantity5PlusPercent;
+        dealText = `Bulk deal applied: ${Math.round(CONFIG.deals.quantity5PlusPercent * 100)}% off because the cart has ${totalQty} items.`;
+      } else if (totalQty >= 3) {
+        discount = subtotal * CONFIG.deals.quantity3PlusPercent;
+        dealText = `Mini bundle applied: ${Math.round(CONFIG.deals.quantity3PlusPercent * 100)}% off because the cart has ${totalQty} items.`;
+      }
+
+      return {
+        subtotal,
+        discount,
+        total: subtotal - discount,
+        totalQty,
+        dealText
+      };
+    }
+
+    function renderCart() {
+      if (!state.cart.length) {
+        cartList.innerHTML = '<div class="muted" style="margin-top: 14px;">No items yet. Your future empire begins with one berry.</div>';
+        subtotalEl.textContent = '$0.00';
+        discountEl.textContent = '-$0.00';
+        totalEl.textContent = '$0.00';
+        fullCartCode.textContent = 'Cart is empty.';
+        dealBox.classList.add('hidden');
+        cartWarning.classList.remove('hidden');
+        cartWarning.textContent = 'Tip: customers can copy the full cart code here and paste it into your Google Form.';
+        return;
+      }
+
+      cartList.innerHTML = state.cart.map((item, index) => `
+        <div class="cart-item">
+          <div class="cart-top">
+            <div>
+              <div class="pill">${item.collection}</div>
+              <div><strong>${item.label}</strong></div>
+              <div class="muted">Qty ${item.qty} • ${money(item.unitPrice)} each</div>
+            </div>
+            <div class="item-price">${money(item.linePrice)}</div>
+          </div>
+          <div class="cart-code">${item.code}</div>
+          <div class="cart-controls">
+            <button class="secondary" type="button" onclick="copyText('${item.code.replace(/'/g, "\\'")}')">Copy item code</button>
+            <button class="danger" type="button" onclick="removeCartItem(${index})">Remove item</button>
+          </div>
+        </div>
+      `).join('');
+
+      const totals = cartTotals();
+      subtotalEl.textContent = money(totals.subtotal);
+      discountEl.textContent = `-${money(totals.discount)}`;
+      totalEl.textContent = money(totals.total);
+
+      if (totals.dealText) {
+        dealBox.classList.remove('hidden');
+        dealBox.textContent = totals.dealText;
+      } else {
+        dealBox.classList.add('hidden');
+        dealBox.textContent = '';
+      }
+
+      cartWarning.classList.add('hidden');
+      fullCartCode.textContent = state.cart.map((item, i) => `${i + 1}.${item.code}`).join(' | ');
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        alert('Copied.');
+      } catch (err) {
+        alert('Copy failed on this browser. You can still select the text manually.');
+      }
+    }
+
+    document.getElementById('add-to-cart-btn').addEventListener('click', addToCart);
+    document.getElementById('copy-code-btn').addEventListener('click', () => copyText(builderCode.textContent));
+    document.getElementById('reset-builder-btn').addEventListener('click', resetBuilder);
+    document.getElementById('clear-cart-btn').addEventListener('click', clearCart);
+    document.getElementById('copy-cart-btn').addEventListener('click', () => copyText(fullCartCode.textContent));
+
+    renderCollectionOptions();
+    renderCart();
+
+    window.selectCollection = selectCollection;
+    window.setBerryModel = setBerryModel;
+    window.setBerryKeychain = setBerryKeychain;
+    window.setBerryCoating = setBerryCoating;
+    window.setBallModel = setBallModel;
+    window.setBallCoating = setBallCoating;
+    window.setFlowerPetal = setFlowerPetal;
+    window.setFlowerCore = setFlowerCore;
+    window.setFlowerStem = setFlowerStem;
+    window.setFlowerCoating = setFlowerCoating;
+    window.setBuilderQty = setBuilderQty;
+    window.setBuilderNote = setBuilderNote;
+    window.removeCartItem = removeCartItem;
+    window.copyText = copyText;
+  </script>
+</body>
+</html>
