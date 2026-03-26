@@ -285,7 +285,6 @@
       <div class="summary-box hidden" id="builder-summary">
         <h3>Current item preview</h3>
         <div id="builder-text" class="muted"></div>
-        <div class="code-line" id="builder-code"></div>
         <div class="actions">
           <button class="primary" id="add-to-cart-btn">Add item to cart</button>
           <button class="secondary" id="reset-builder-btn" type="button">Start over</button>
@@ -383,8 +382,7 @@
     const stepConfig = document.getElementById('step-config');
     const builderSummary = document.getElementById('builder-summary');
     const builderText = document.getElementById('builder-text');
-    const builderCode = document.getElementById('builder-code');
-    const cartList = document.getElementById('cart-list');
+        const cartList = document.getElementById('cart-list');
     const subtotalEl = document.getElementById('subtotal');
     const fullCartCode = document.getElementById('full-cart-code');
     const cartWarning = document.getElementById('cart-warning');
@@ -721,7 +719,6 @@
       }
       const item = buildItemFromBuilder();
       builderText.innerHTML = `<strong>${item.collection}</strong><br>${item.label}<br>${item.qtyLabel}<br>Unit price: ${money(item.unitPrice)}<br>Line total: ${money(item.linePrice)}`;
-      builderCode.textContent = item.code;
       builderSummary.classList.remove('hidden');
     }
 
@@ -775,7 +772,6 @@
             </div>
             <div class="item-price">${money(item.linePrice)}</div>
           </div>
-          <div class="cart-code">${item.code}</div>
           <div class="cart-controls">
             <button class="danger" type="button" onclick="removeCartItem(${index})">Remove item</button>
           </div>
@@ -785,7 +781,8 @@
       const totals = cartTotals();
       subtotalEl.textContent = money(totals.subtotal);
       cartWarning.classList.add('hidden');
-      fullCartCode.textContent = state.cart.map((item, i) => `${i + 1}.${item.code}`).join(' | ');
+      const itemCodes = state.cart.map((item, i) => `${i + 1}.${item.code}`).join(' | ');
+      fullCartCode.textContent = `${totals.subtotal.toFixed(2)} || ${state.cart.map(item => item.code).join(' | ')}`;
     }
 
     async function copyText(text) {
