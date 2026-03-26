@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MOCAS LiveDeal</title>
+
   <style>
     :root {
       --bg: #f6f7fb;
@@ -12,875 +13,172 @@
       --muted: #6b7280;
       --line: #e5e7eb;
       --accent: #d94f70;
-      --accent-2: #f3f4f6;
-      --good: #0f766e;
-      --warn: #b45309;
-      --danger: #b91c1c;
-      --shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-      --radius: 18px;
     }
-
-    * { box-sizing: border-box; }
 
     body {
       margin: 0;
+      padding: 40px 20px;
       font-family: Arial, Helvetica, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.4;
-      padding: 24px;
     }
 
     .wrap {
-      max-width: 1000px;
+      max-width: 900px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
     }
 
     .card {
       background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
-    }
-
-    h1, h2, h3 {
-      margin: 0 0 10px;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
     }
 
     h1 {
-      font-size: 24px;
+      margin: 0 0 20px;
+      font-size: 36px;
     }
 
-    .sub {
-      color: var(--muted);
-      margin-bottom: 18px;
-    }
-
-    .step {
-      display: none;
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid var(--line);
-    }
-
-    .step.active {
-      display: block;
-    }
-
-    .option-grid {
+    .deal-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 8px;
-      margin-top: 10px;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+      align-items: center;
     }
 
-    .option-btn,
-    button,
-    select,
-    input[type="number"],
-    input[type="text"] {
-      font: inherit;
-    }
-
-    .option-btn {
-      width: 100%;
-      text-align: left;
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      background: white;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: 0.18s ease;
-      font-size: 14px;
-    }
-
-    .option-btn:hover {
-      border-color: var(--accent);
-      transform: translateY(-1px);
-    }
-
-    .option-btn.selected {
-      background: #fff1f4;
-      border-color: var(--accent);
-      color: #7c2136;
-      font-weight: 700;
-    }
-
-    .field-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .field label {
-      font-weight: 700;
-    }
-
-    select, input[type="number"], input[type="text"] {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 11px 12px;
-      background: white;
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-    }
-
-    button {
-      border: none;
-      border-radius: 12px;
-      padding: 12px 16px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .primary {
-      background: var(--accent);
-      color: white;
-    }
-
-    .secondary {
-      background: var(--accent-2);
-      color: var(--text);
-      border: 1px solid var(--line);
-    }
-
-    .danger {
-      background: #fee2e2;
-      color: var(--danger);
-      border: 1px solid #fecaca;
-    }
-
-    .summary-box {
-      background: #fafafa;
-      border: 1px dashed var(--line);
-      border-radius: 14px;
-      padding: 14px;
-      margin-top: 16px;
-    }
-
-    .code-line {
-      background: #111827;
-      color: #f9fafb;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-family: Consolas, Monaco, monospace;
-      word-break: break-word;
-      margin-top: 12px;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
-    .cart-item {
-      border: 1px solid var(--line);
+    .deal-box {
+      background: #fff7fa;
+      border: 1px solid #f3c8d4;
       border-radius: 16px;
-      padding: 14px;
-      margin-top: 12px;
-      background: white;
-    }
-
-    .cart-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: start;
+      padding: 18px;
     }
 
     .pill {
       display: inline-block;
-      font-size: 12px;
+      background: #fee2e2;
+      color: #7f1d1d;
       font-weight: 700;
-      background: #eef2ff;
-      color: #3730a3;
-      padding: 4px 8px;
+      padding: 6px 10px;
       border-radius: 999px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      font-size: 12px;
     }
 
-    .item-price {
-      font-weight: 700;
-      white-space: nowrap;
+    .deal-text {
+      font-size: 22px;
+      line-height: 1.4;
     }
 
-    .cart-code {
-      font-family: Consolas, Monaco, monospace;
-      font-size: 13px;
-      color: #374151;
-      margin-top: 8px;
-      word-break: break-word;
+    .timer {
+      background: linear-gradient(135deg,#0f172a,#020617);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
     }
 
-    .cart-controls {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 10px;
+    .timer-grid {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 10px;
     }
 
-    .totals {
-      margin-top: 18px;
-      padding-top: 16px;
-      border-top: 1px solid var(--line);
-    }
-
-    .totals-row {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 8px;
-    }
-
-    .warning {
-      margin-top: 10px;
-      padding: 10px 12px;
+    .time-unit {
+      background: rgba(255,255,255,0.08);
       border-radius: 12px;
-      background: #fff7ed;
-      color: var(--warn);
-      border: 1px solid #fed7aa;
+      padding: 12px 8px;
+      text-align: center;
+      color: white;
     }
 
-    .hidden {
-      display: none;
+    .time-value {
+      font-size: 26px;
+      font-weight: 700;
     }
 
-    .deal-row{display:grid;grid-template-columns:1.2fr 0.8fr;gap:12px;align-items:center;margin-top:8px}
-.deal-text{background:#fff7fa;border:1px solid #f3c8d4;border-radius:12px;padding:12px}
-.deal-timer{background:linear-gradient(135deg,#0f172a,#020617);color:#fff;border-radius:12px;padding:10px;box-shadow:0 6px 18px rgba(0,0,0,0.25)}
-.timer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.time-unit{background:rgba(255,255,255,0.08);border-radius:10px;padding:8px 6px;text-align:center}
-.time-value{font-weight:700;font-size:18px;line-height:1}
-.time-label{font-size:10px;opacity:.8}
-@media (max-width: 900px) {
-      .wrap {
-        grid-template-columns: 1fr;
-      }
-      .field-row {
+    .time-label {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 700px) {
+      .deal-row {
         grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
-    <section class="card">
-      <h1>BerryFold Cart Builder</h1>
-      <div class="sub">Fill your cart here. We will generate a compact order code for you to paste into our Google Form.</div>
+    <div class="card">
+      <h1>LiveDeal</h1>
 
-      <div class="step active" id="step-collection">
-        <h2>Choose from our collections:</h2>
-        <div class="option-grid" id="collection-options"></div>
-      </div>
-
-      <div class="step" id="step-config"></div>
-
-      <div class="summary-box hidden" id="builder-summary">
-        <h3>Current item preview</h3>
-        <div id="builder-text" class="muted"></div>
-        <div class="actions">
-          <button class="primary" id="add-to-cart-btn">Add item to cart</button>
-          <button class="secondary" id="reset-builder-btn" type="button">Start over</button>
-        </div>
-      </div>
-    </section>
-
-    <aside>
-      <div class="card" id="live-deal-box" style="margin-bottom: 16px;">
-        <h2>LiveDeal</h2>
-        <div class="deal-row">
-          <div class="deal-text">
-            <div class="pill" style="background:#fee2e2;color:#7f1d1d;">LIVE NOW</div>
-            <div id="live-deal-text" class="muted" style="margin-top:6px;">No live deal right now.</div>
+      <div class="deal-row">
+        <div class="deal-box">
+          <div class="pill">LIVE NOW</div>
+          <div class="deal-text" id="deal-text">
+            Spring special: buy 3 or more items and get 10% off.
           </div>
-          <div class="deal-timer">
-            <div class="timer-grid">
-              <div class="time-unit"><div class="time-value" id="d">--</div><div class="time-label">D</div></div>
-              <div class="time-unit"><div class="time-value" id="h">--</div><div class="time-label">H</div></div>
-              <div class="time-unit"><div class="time-value" id="m">--</div><div class="time-label">M</div></div>
-              <div class="time-unit"><div class="time-value" id="s">--</div><div class="time-label">S</div></div>
+        </div>
+
+        <div class="timer">
+          <div class="timer-grid">
+            <div class="time-unit">
+              <div class="time-value" id="d">--</div>
+              <div class="time-label">D</div>
+            </div>
+            <div class="time-unit">
+              <div class="time-value" id="h">--</div>
+              <div class="time-label">H</div>
+            </div>
+            <div class="time-unit">
+              <div class="time-value" id="m">--</div>
+              <div class="time-label">M</div>
+            </div>
+            <div class="time-unit">
+              <div class="time-value" id="s">--</div>
+              <div class="time-label">S</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="card">
-      <h2>Your cart</h2>
-      <div class="muted">Review the items here, then copy the final order code into your Google Form.</div>
-
-      <div class="actions">
-        <button class="secondary" id="copy-cart-btn" type="button">Copy final order code</button>
-        <button class="danger" id="clear-cart-btn" type="button">Clear cart</button>
-      </div>
-
-      <div id="cart-list"></div>
-
-      <div class="totals">
-        <div class="totals-row"><span>Pre-Discount Subtotal</span><span id="subtotal">$0.00</span></div>
-        <div id="cart-warning" class="warning hidden"></div>
-        <div class="code-line" id="full-cart-code" style="margin-top: 16px;">Cart is empty.</div>
-      </div>
-    </aside>
+    </div>
   </div>
 
   <script>
-    const CONFIG = {
-      pricing: {
-        berryBase: {
-          sky: 7.5,
-          sun: 7.5,
-          lva: 7.5,
-          dgn: 7.5,
-          rby: 9.0,
-          ngt: 9.0,
-          lea: 9.0
-        },
-        pokeballBase: {
-          reg: 11.0,
-          gli: 11.0,
-          gdk: 11.0,
-          ult: 11.0
-        },
-        flowerBase: 5.0,
-        keychainGold: 1.5,
-        keychainSilver: 1.5,
-        coatingBerry: 1.0,
-        coatingBall: 1.0,
-        coatingFlower: 1.0
-      },
-      collections: [
-        { id: 'bf', name: 'MOCAS BerryFold Series' },
-        { id: 'pb', name: 'MOCAS Poke-Ball Assortment' },
-        { id: 'sf', name: 'MOCAS Stem Flower Selection' }
-      ],
-      berryModels: [
-        { id: 'sky', name: 'SkyBerry (cyan)' },
-        { id: 'sun', name: 'SunBerry (yellow)' },
-        { id: 'lva', name: 'LavaBerry (orange)' },
-        { id: 'dgn', name: 'DragonBerry (pink)' },
-        { id: 'rby', name: 'RubyBerry (red)' },
-        { id: 'ngt', name: 'NightBerry (navy)' },
-        { id: 'lea', name: 'LeafBerry (forest)' }
-      ],
-      keychainOptions: [
-        { id: 'nll', name: 'No keychain' },
-        { id: 'glk', name: 'Golden' },
-        { id: 'sik', name: 'Silver' }
-      ],
-      ballModels: [
-        { id: 'reg', name: 'Regular' },
-        { id: 'gli', name: 'Great Ball (light)' },
-        { id: 'gdk', name: 'Great Ball (dark)' },
-        { id: 'ult', name: 'Ultra Ball' }
-      ],
-      colors: [
-        { id: 'pi', name: 'Pink' },
-        { id: 're', name: 'Red' },
-        { id: 'or', name: 'Orange' },
-        { id: 'ye', name: 'Yellow' },
-        { id: 'lg', name: 'Light green' },
-        { id: 'dg', name: 'Dark green' },
-        { id: 'lb', name: 'Light blue' },
-        { id: 'db', name: 'Dark blue' }
-      ]
-    };
+    const END_TIME = new Date("2026-03-31T23:59:59");
 
-    const state = {
-      builder: {},
-      cart: [],
-      liveDeal: {
-        text: 'Spring special: buy 3 or more items and get 10% off.',
-        endTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000 + 5 * 60 * 60 * 1000)
-      }
-    };
-
-    const collectionOptions = document.getElementById('collection-options');
-    const stepConfig = document.getElementById('step-config');
-    const builderSummary = document.getElementById('builder-summary');
-    const builderText = document.getElementById('builder-text');
-        const cartList = document.getElementById('cart-list');
-    const subtotalEl = document.getElementById('subtotal');
-    const fullCartCode = document.getElementById('full-cart-code');
-    const cartWarning = document.getElementById('cart-warning');
-    const liveDealText = document.getElementById('live-deal-text');
-    const liveDealTimer = document.getElementById('live-deal-timer');
-
-    function money(n) {
-      return `$${n.toFixed(2)}`;
+    function pad(n) {
+      return String(n).padStart(2,'0');
     }
 
-    function byId(list, id) {
-      return list.find(item => item.id === id);
-    }
-
-    function escapeHtmlAttr(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    }
-
-    function sanitizeText(text) {
-      return String(text || '')
-        .trim()
-        .replace(/[^0-9]/g, '')
-        .slice(0, 2);
-    }
-
-    function renderLiveDeal() {
-      const deal = state.liveDeal;
-      if (!deal || !deal.text || !deal.endTime) {
-        liveDealText.textContent = 'No live deal right now.';
-        ['d','h','m','s'].forEach(id=>document.getElementById(id).textContent='--');
-        return;
-      }
-
+    function update() {
       const now = new Date();
-      const diff = deal.endTime - now;
+      const diff = END_TIME - now;
 
       if (diff <= 0) {
-        liveDealText.textContent = `${deal.text} This deal has ended.`;
-        ['d','h','m','s'].forEach(id=>document.getElementById(id).textContent='00');
+        ['d','h','m','s'].forEach(id => document.getElementById(id).textContent = "00");
         return;
       }
 
-      const totalSeconds = Math.floor(diff / 1000);
-      const days = Math.floor(totalSeconds / 86400);
-      const hours = Math.floor((totalSeconds % 86400) / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
+      const t = Math.floor(diff / 1000);
 
-      liveDealText.textContent = deal.text;
-      document.getElementById('d').textContent = String(days).padStart(2,'0');
-      document.getElementById('h').textContent = String(hours).padStart(2,'0');
-      document.getElementById('m').textContent = String(minutes).padStart(2,'0');
-      document.getElementById('s').textContent = String(seconds).padStart(2,'0');
+      const d = Math.floor(t / 86400);
+      const h = Math.floor((t % 86400) / 3600);
+      const m = Math.floor((t % 3600) / 60);
+      const s = t % 60;
+
+      document.getElementById('d').textContent = pad(d);
+      document.getElementById('h').textContent = pad(h);
+      document.getElementById('m').textContent = pad(m);
+      document.getElementById('s').textContent = pad(s);
     }
 
-    function renderCollectionOptions() {
-      collectionOptions.innerHTML = CONFIG.collections.map(c => `
-        <button class="option-btn ${state.builder.collection === c.id ? 'selected' : ''}" type="button" onclick="selectCollection('${c.id}')">
-          <strong>${c.name}</strong>
-        </button>
-      `).join('');
-    }
-
-    function selectCollection(id) {
-      state.builder = { collection: id };
-      renderCollectionOptions();
-      renderConfigStep();
-      builderSummary.classList.add('hidden');
-    }
-
-    function optionButtons(title, list, selectedValue, setterName) {
-      return `
-        <h2>${title}</h2>
-        <div class="option-grid">
-          ${list.map(item => `
-            <button class="option-btn ${selectedValue === item.id ? 'selected' : ''}" type="button" onclick="${setterName}('${item.id}')">
-              <strong>${item.name}</strong>
-            </button>
-          `).join('')}
-        </div>
-      `;
-    }
-
-    function yesNoButtons(title, currentValue, setterName) {
-      return `
-        <h2>${title}</h2>
-        <div class="option-grid">
-          <button class="option-btn ${currentValue === 'y' ? 'selected' : ''}" type="button" onclick="${setterName}('y')">
-            <strong>Yes</strong>
-          </button>
-          <button class="option-btn ${currentValue === 'n' ? 'selected' : ''}" type="button" onclick="${setterName}('n')">
-            <strong>No</strong>
-          </button>
-        </div>
-      `;
-    }
-
-    function dropdownField(title, options, selectedValue, setterName) {
-      return `
-        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
-          <h2>${title}</h2>
-          <div class="field-row">
-            <div class="field">
-              <label>Select an option</label>
-              <select onchange="${setterName}(this.value)">
-                <option value="">Choose one...</option>
-                ${options.map(opt => `<option value="${opt.id}" ${selectedValue === opt.id ? 'selected' : ''}>${opt.name} [${opt.id}]</option>`).join('')}
-              </select>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function quantityFields(title, qtyChoice, customQtyText, qtySetter, customSetter) {
-      return `
-        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
-          <h2>${title}</h2>
-          <div class="field-row">
-            <div class="field">
-              <label>Quantity</label>
-              <select onchange="${qtySetter}(this.value)">
-                <option value="">Choose...</option>
-                <option value="1" ${qtyChoice === '1' ? 'selected' : ''}>x1</option>
-                <option value="2" ${qtyChoice === '2' ? 'selected' : ''}>x2</option>
-                <option value="3" ${qtyChoice === '3' ? 'selected' : ''}>x3</option>
-                <option value="other" ${qtyChoice === 'other' ? 'selected' : ''}>Other</option>
-              </select>
-            </div>
-            ${qtyChoice === 'other' ? `
-            <div class="field">
-              <label>Custom quantity</label>
-              <input
-                type="number"
-                min="4"
-                max="99"
-                placeholder="4-99"
-                value="${escapeHtmlAttr(customQtyText || '')}"
-                oninput="${customSetter}(this.value)"
-              />
-            </div>
-            ` : ''}
-          </div>
-        </div>
-      `;
-    }
-
-    function renderConfigStep() {
-      const c = state.builder.collection;
-      if (!c) return;
-
-      stepConfig.classList.add('active');
-
-      if (c === 'bf') {
-        stepConfig.innerHTML = `
-          ${optionButtons('2. Which BerryFold model would you like?', CONFIG.berryModels, state.builder.model, 'setBerryModel')}
-          ${state.builder.model ? optionButtons('3. Would you like to turn it into a keychain?', CONFIG.keychainOptions, state.builder.keychain, 'setBerryKeychain') : ''}
-          ${state.builder.model && state.builder.keychain ? yesNoButtons('4. Would you like to add a resistance coating?', state.builder.coating, 'setBerryCoating') : ''}
-          ${state.builder.model && state.builder.keychain && state.builder.coating ? quantityFields('5. Quantity', state.builder.qtyChoice, state.builder.customText, 'setBuilderQtyChoice', 'setBuilderCustomText') : ''}
-        `;
-      }
-
-      if (c === 'pb') {
-        stepConfig.innerHTML = `
-          ${optionButtons('2. Which Poke-Ball model would you like?', CONFIG.ballModels, state.builder.model, 'setBallModel')}
-          ${state.builder.model ? yesNoButtons('3. Would you like to add a resistance coating?', state.builder.coating, 'setBallCoating') : ''}
-          ${state.builder.model && state.builder.coating ? quantityFields('4. Quantity', state.builder.qtyChoice, state.builder.customText, 'setBuilderQtyChoice', 'setBuilderCustomText') : ''}
-        `;
-      }
-
-      if (c === 'sf') {
-        stepConfig.innerHTML = `
-          ${dropdownField('2. What color petal would you like?', CONFIG.colors, state.builder.petal, 'setFlowerPetal')}
-          ${state.builder.petal ? dropdownField('3. What color core would you like?', CONFIG.colors, state.builder.core, 'setFlowerCore') : ''}
-          ${state.builder.petal && state.builder.core ? dropdownField('4. What color stem would you like?', CONFIG.colors, state.builder.stem, 'setFlowerStem') : ''}
-          ${state.builder.petal && state.builder.core && state.builder.stem ? yesNoButtons('5. Would you like to add a resistance coating?', state.builder.coating, 'setFlowerCoating') : ''}
-          ${state.builder.petal && state.builder.core && state.builder.stem && state.builder.coating ? quantityFields('6. Quantity', state.builder.qtyChoice, state.builder.customText, 'setBuilderQtyChoice', 'setBuilderCustomText') : ''}
-        `;
-      }
-
-      maybeRenderPreview();
-    }
-
-    function setBerryModel(id) {
-      state.builder.model = id;
-      delete state.builder.keychain;
-      delete state.builder.coating;
-      delete state.builder.qtyChoice;
-      delete state.builder.customText;
-      renderConfigStep();
-    }
-
-    function setBerryKeychain(id) {
-      state.builder.keychain = id;
-      delete state.builder.coating;
-      delete state.builder.qtyChoice;
-      delete state.builder.customText;
-      renderConfigStep();
-    }
-
-    function setBerryCoating(val) {
-      state.builder.coating = val;
-      delete state.builder.qtyChoice;
-      delete state.builder.customText;
-      renderConfigStep();
-    }
-
-    function setBallModel(id) {
-      state.builder.model = id;
-      delete state.builder.coating;
-      delete state.builder.qtyChoice;
-      delete state.builder.customText;
-      renderConfigStep();
-    }
-
-    function setBallCoating(val) {
-      state.builder.coating = val;
-      delete state.builder.qtyChoice;
-      delete state.builder.customText;
-      renderConfigStep();
-    }
-
-    function setFlowerPetal(id) {
-      state.builder.petal = id;
-      delete state.builder.core;
-      delete state.builder.stem;
-      delete state.builder.coating;
-      delete state.builder.qtyChoice;
-      delete state.builder.customText;
-      renderConfigStep();
-    }
-
-    function setFlowerCore(id) {
-      state.builder.core = id;
-      delete state.builder.stem;
-      delete state.builder.coating;
-      delete state.builder.qtyChoice;
-      delete state.builder.customText;
-      renderConfigStep();
-    }
-
-    function setFlowerStem(id) {
-      state.builder.stem = id;
-      delete state.builder.coating;
-      delete state.builder.qtyChoice;
-      delete state.builder.customText;
-      renderConfigStep();
-    }
-
-    function setFlowerCoating(val) {
-      state.builder.coating = val;
-      delete state.builder.qtyChoice;
-      delete state.builder.customText;
-      renderConfigStep();
-    }
-
-    function setBuilderQtyChoice(val) {
-      state.builder.qtyChoice = val;
-      if (val !== 'other') {
-        delete state.builder.customText;
-      }
-      renderConfigStep();
-    }
-
-    function setBuilderCustomText(val) {
-      state.builder.customText = val;
-      maybeRenderPreview();
-    }
-
-    function builderComplete() {
-      const b = state.builder;
-      if (!b.qtyChoice) return false;
-      if (b.qtyChoice === 'other') {
-        const n = Number(sanitizeText(b.customText));
-        if (!n || n < 4 || n > 99) return false;
-      }
-      if (b.collection === 'bf') return !!(b.model && b.keychain && b.coating);
-      if (b.collection === 'pb') return !!(b.model && b.coating);
-      if (b.collection === 'sf') return !!(b.petal && b.core && b.stem && b.coating);
-      return false;
-    }
-
-    function buildItemFromBuilder() {
-      const b = state.builder;
-      const qtyChoice = b.qtyChoice || '1';
-      const customText = sanitizeText(b.customText);
-
-      let qty = 1;
-      let qtyCode = '';
-      let qtyLabel = '';
-      let customPricing = false;
-
-      if (qtyChoice === 'other') {
-        qty = Number(customText);
-        qtyCode = customText ? `q${qty}` : 'q4';
-        qtyLabel = `Quantity: ${qty}`;
-        customPricing = false;
-      } else {
-        qty = Number(qtyChoice);
-        qtyCode = `q${qty}`;
-        qtyLabel = `Quantity: ${qty}`;
-      }
-
-      if (b.collection === 'bf') {
-        const model = byId(CONFIG.berryModels, b.model);
-        const keychain = byId(CONFIG.keychainOptions, b.keychain);
-        const coatingLabel = b.coating === 'y' ? 'Coated' : 'Uncoated';
-        const unitPrice = CONFIG.pricing.berryBase[b.model]
-          + (b.keychain === 'glk' ? CONFIG.pricing.keychainGold : 0)
-          + (b.keychain === 'sik' ? CONFIG.pricing.keychainSilver : 0)
-          + (b.coating === 'y' ? CONFIG.pricing.coatingBerry : 0);
-        return {
-          collection: 'MOCAS BerryFold Series',
-          label: `${model.name} • ${keychain.name} • ${coatingLabel}`,
-          code: ['bf', b.model, b.keychain, b.coating, qtyCode].join('-'),
-          qty,
-          qtyLabel,
-          unitPrice,
-          linePrice: customPricing ? null : unitPrice * qty,
-          customPricing
-        };
-      }
-
-      if (b.collection === 'pb') {
-        const model = byId(CONFIG.ballModels, b.model);
-        const coatingLabel = b.coating === 'y' ? 'Coated' : 'Uncoated';
-        const unitPrice = CONFIG.pricing.pokeballBase[b.model]
-          + (b.coating === 'y' ? CONFIG.pricing.coatingBall : 0);
-        return {
-          collection: 'MOCAS Poke-Ball Assortment',
-          label: `${model.name} • ${coatingLabel}`,
-          code: ['pb', b.model, b.coating, qtyCode].join('-'),
-          qty,
-          qtyLabel,
-          unitPrice,
-          linePrice: customPricing ? null : unitPrice * qty,
-          customPricing
-        };
-      }
-
-      const petal = byId(CONFIG.colors, b.petal);
-      const core = byId(CONFIG.colors, b.core);
-      const stem = byId(CONFIG.colors, b.stem);
-      const coatingLabel = b.coating === 'y' ? 'Coated' : 'Uncoated';
-      const unitPrice = CONFIG.pricing.flowerBase + (b.coating === 'y' ? CONFIG.pricing.coatingFlower : 0);
-      return {
-        collection: 'MOCAS Stem Flower Selection',
-        label: `Petal ${petal.name} • Core ${core.name} • Stem ${stem.name} • ${coatingLabel}`,
-        code: ['sf', b.petal, b.core, b.stem, b.coating, qtyCode].join('-'),
-        qty,
-        qtyLabel,
-        unitPrice,
-        linePrice: customPricing ? null : unitPrice * qty,
-        customPricing
-      };
-    }
-
-    function maybeRenderPreview() {
-      if (!builderComplete()) {
-        builderSummary.classList.add('hidden');
-        return;
-      }
-      const item = buildItemFromBuilder();
-      builderText.innerHTML = `<strong>${item.collection}</strong><br>${item.label}<br>${item.qtyLabel}<br>Unit price: ${money(item.unitPrice)}<br>Line total: ${money(item.linePrice)}`;
-      builderSummary.classList.remove('hidden');
-    }
-
-    function addToCart() {
-      if (!builderComplete()) return;
-      state.cart.push(buildItemFromBuilder());
-      renderCart();
-      resetBuilder();
-    }
-
-    function resetBuilder() {
-      state.builder = {};
-      renderCollectionOptions();
-      stepConfig.classList.remove('active');
-      stepConfig.innerHTML = '';
-      builderSummary.classList.add('hidden');
-    }
-
-    function removeCartItem(index) {
-      state.cart.splice(index, 1);
-      renderCart();
-    }
-
-    function clearCart() {
-      state.cart = [];
-      renderCart();
-    }
-
-    function cartTotals() {
-      const subtotal = state.cart.reduce((sum, item) => sum + (item.linePrice || 0), 0);
-      return { subtotal };
-    }
-
-    function renderCart() {
-      if (!state.cart.length) {
-        cartList.innerHTML = '<div class="muted" style="margin-top: 14px;">No items yet. Your future empire begins with one berry.</div>';
-        subtotalEl.textContent = '$0.00';
-        fullCartCode.textContent = 'Cart is empty.';
-        cartWarning.classList.remove('hidden');
-        cartWarning.textContent = 'Tip: customers can copy the full cart code here and paste it into your Google Form.';
-        return;
-      }
-
-      cartList.innerHTML = state.cart.map((item, index) => `
-        <div class="cart-item">
-          <div class="cart-top">
-            <div>
-              <div class="pill">${item.collection}</div>
-              <div><strong>${item.label}</strong></div>
-              <div class="muted">${item.qtyLabel} • ${money(item.unitPrice)} each</div>
-            </div>
-            <div class="item-price">${money(item.linePrice)}</div>
-          </div>
-          <div class="cart-controls">
-            <button class="danger" type="button" onclick="removeCartItem(${index})">Remove item</button>
-          </div>
-        </div>
-      `).join('');
-
-      const totals = cartTotals();
-      subtotalEl.textContent = money(totals.subtotal);
-      cartWarning.classList.add('hidden');
-      const itemCodes = state.cart.map((item, i) => `${i + 1}.${item.code}`).join(' | ');
-      fullCartCode.textContent = `${totals.subtotal.toFixed(2)} || ${state.cart.map(item => item.code).join(' | ')}`;
-    }
-
-    async function copyText(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-        alert('Copied.');
-      } catch (err) {
-        alert('Copy failed on this browser. You can still select the text manually.');
-      }
-    }
-
-    document.getElementById('add-to-cart-btn').addEventListener('click', addToCart);
-    document.getElementById('reset-builder-btn').addEventListener('click', resetBuilder);
-    document.getElementById('clear-cart-btn').addEventListener('click', clearCart);
-    document.getElementById('copy-cart-btn').addEventListener('click', () => copyText(fullCartCode.textContent));
-
-    renderCollectionOptions();
-    renderCart();
-    renderLiveDeal();
-    setInterval(renderLiveDeal, 1000);
-
-    window.selectCollection = selectCollection;
-    window.setBerryModel = setBerryModel;
-    window.setBerryKeychain = setBerryKeychain;
-    window.setBerryCoating = setBerryCoating;
-    window.setBallModel = setBallModel;
-    window.setBallCoating = setBallCoating;
-    window.setFlowerPetal = setFlowerPetal;
-    window.setFlowerCore = setFlowerCore;
-    window.setFlowerStem = setFlowerStem;
-    window.setFlowerCoating = setFlowerCoating;
-    window.setBuilderQtyChoice = setBuilderQtyChoice;
-    window.setBuilderCustomText = setBuilderCustomText;
-    window.removeCartItem = removeCartItem;
-    window.copyText = copyText;
+    update();
+    setInterval(update, 1000);
   </script>
 </body>
 </html>
