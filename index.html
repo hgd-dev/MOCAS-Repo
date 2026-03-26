@@ -429,8 +429,16 @@
       builderSummary.classList.add('hidden');
     }
 
-    function optionButtons(title, list, selectedValue, setterName) {
+    function sectionBlock(content, withDivider = true) {
       return `
+        <div style="${withDivider ? 'margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);' : ''}">
+          ${content}
+        </div>
+      `;
+    }
+
+    function optionButtons(title, list, selectedValue, setterName, withDivider = true) {
+      return sectionBlock(`
         <h2>${title}</h2>
         <div class="option-grid">
           ${list.map(item => `
@@ -439,11 +447,11 @@
             </button>
           `).join('')}
         </div>
-      `;
+      `, withDivider);
     }
 
-    function yesNoButtons(title, currentValue, setterName) {
-      return `
+    function yesNoButtons(title, currentValue, setterName, withDivider = true) {
+      return sectionBlock(`
         <h2>${title}</h2>
         <div class="option-grid">
           <button class="option-btn ${currentValue === 'y' ? 'selected' : ''}" type="button" onclick="${setterName}('y')">
@@ -453,12 +461,11 @@
             <strong>No</strong>
           </button>
         </div>
-      `;
+      `, withDivider);
     }
 
-    function dropdownField(title, options, selectedValue, setterName) {
-      return `
-        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
+    function dropdownField(title, options, selectedValue, setterName, withDivider = true) {
+      return sectionBlock(`
           <h2>${title}</h2>
           <div class="field-row">
             <div class="field">
@@ -469,13 +476,11 @@
               </select>
             </div>
           </div>
-        </div>
-      `;
+      `, withDivider);
     }
 
-    function quantityFields(title, qtyChoice, customQtyText, qtySetter, customSetter) {
-      return `
-        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);">
+    function quantityFields(title, qtyChoice, customQtyText, qtySetter, customSetter, withDivider = true) {
+      return sectionBlock(`
           <h2>${title}</h2>
           <div class="field-row">
             <div class="field">
@@ -502,8 +507,7 @@
             </div>
             ` : ''}
           </div>
-        </div>
-      `;
+      `, withDivider);
     }
 
     function renderConfigStep() {
@@ -514,7 +518,7 @@
 
       if (c === 'bf') {
         stepConfig.innerHTML = `
-          ${optionButtons('2. Which BerryFold model would you like?', CONFIG.berryModels, state.builder.model, 'setBerryModel')}
+          ${optionButtons('2. Which BerryFold model would you like?', CONFIG.berryModels, state.builder.model, 'setBerryModel', false)}
           ${state.builder.model ? optionButtons('3. Would you like to turn it into a keychain?', CONFIG.keychainOptions, state.builder.keychain, 'setBerryKeychain') : ''}
           ${state.builder.model && state.builder.keychain ? yesNoButtons('4. Would you like to add a resistance coating?', state.builder.coating, 'setBerryCoating') : ''}
           ${state.builder.model && state.builder.keychain && state.builder.coating ? quantityFields('5. Quantity', state.builder.qtyChoice, state.builder.customText, 'setBuilderQtyChoice', 'setBuilderCustomText') : ''}
@@ -523,7 +527,7 @@
 
       if (c === 'pb') {
         stepConfig.innerHTML = `
-          ${optionButtons('2. Which Poke-Ball model would you like?', CONFIG.ballModels, state.builder.model, 'setBallModel')}
+          ${optionButtons('2. Which Poke-Ball model would you like?', CONFIG.ballModels, state.builder.model, 'setBallModel', false)}
           ${state.builder.model ? yesNoButtons('3. Would you like to add a resistance coating?', state.builder.coating, 'setBallCoating') : ''}
           ${state.builder.model && state.builder.coating ? quantityFields('4. Quantity', state.builder.qtyChoice, state.builder.customText, 'setBuilderQtyChoice', 'setBuilderCustomText') : ''}
         `;
@@ -531,7 +535,7 @@
 
       if (c === 'sf') {
         stepConfig.innerHTML = `
-          ${dropdownField('2. What color petal would you like?', CONFIG.colors, state.builder.petal, 'setFlowerPetal')}
+          ${dropdownField('2. What color petal would you like?', CONFIG.colors, state.builder.petal, 'setFlowerPetal', false)}
           ${state.builder.petal ? dropdownField('3. What color core would you like?', CONFIG.colors, state.builder.core, 'setFlowerCore') : ''}
           ${state.builder.petal && state.builder.core ? dropdownField('4. What color stem would you like?', CONFIG.colors, state.builder.stem, 'setFlowerStem') : ''}
           ${state.builder.petal && state.builder.core && state.builder.stem ? yesNoButtons('5. Would you like to add a resistance coating?', state.builder.coating, 'setFlowerCoating') : ''}
