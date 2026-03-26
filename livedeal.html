@@ -1,268 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MOCAS LiveDeal</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MOCAS LiveDeal</title>
 
-  <style>
-    :root {
-      --bg: #f6f7fb;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --line: #e5e7eb;
-      --accent: #d94f70;
-    }
+<style>
+:root{
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+}
 
-    * { box-sizing: border-box; }
+body{
+  margin:0;
+  padding:40px 20px;
+  font-family:Arial, Helvetica, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
 
-    body {
-      margin: 0;
-      padding: 40px 20px;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
+.wrap{
+  max-width:900px;
+  margin:0 auto;
+}
 
-    .wrap {
-      max-width: 980px;
-      margin: 0 auto;
-    }
+.page{
+  background:var(--card);
+  border-radius:20px;
+  padding:28px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.08);
+}
 
-    .page-card {
-      background: var(--card);
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-    }
+h1{
+  margin:0 0 18px;
+  font-size:34px;
+}
 
-    h1 {
-      margin: 0 0 20px;
-      font-size: 36px;
-    }
+.deal-list{
+  display:grid;
+  gap:16px;
+}
 
-    .sub {
-      color: var(--muted);
-      margin-bottom: 22px;
-      font-size: 18px;
-    }
+.deal-card{
+  position:relative;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:18px;
+  min-height:140px;
+}
 
-    .deal-list {
-      display: grid;
-      gap: 18px;
-    }
+.deal-box{
+  background:#fff7fa;
+  border:1px solid #f3c8d4;
+  border-radius:16px;
+  padding:16px;
+  padding-right:170px; /* space for timer */
+}
 
-    .deal-card {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 18px;
-      align-items: center;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px;
-    }
+.pill{
+  display:inline-block;
+  background:#fee2e2;
+  color:#7f1d1d;
+  font-weight:700;
+  padding:5px 10px;
+  border-radius:999px;
+  font-size:12px;
+  margin-bottom:8px;
+}
 
-    .deal-box {
-      background: #fff7fa;
-      border: 1px solid #f3c8d4;
-      border-radius: 16px;
-      padding: 18px;
-    }
+.deal-title{
+  font-size:22px;
+  font-weight:700;
+  line-height:1.3;
+}
 
-    .pill {
-      display: inline-block;
-      background: #fee2e2;
-      color: #7f1d1d;
-      font-weight: 700;
-      padding: 6px 10px;
-      border-radius: 999px;
-      margin-bottom: 10px;
-      font-size: 12px;
-      letter-spacing: 0.02em;
-    }
+.deal-note{
+  margin-top:6px;
+  font-size:14px;
+  color:var(--muted);
+}
 
-    .deal-title {
-      font-size: 24px;
-      font-weight: 700;
-      line-height: 1.3;
-      margin-bottom: 8px;
-    }
+.timer{
+  position:absolute;
+  right:14px;
+  bottom:14px;
+  background:linear-gradient(135deg,#0f172a,#020617);
+  border-radius:14px;
+  padding:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.25);
+}
 
-    .deal-note {
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.45;
-    }
+.timer-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+}
 
-    .timer {
-      background: linear-gradient(135deg,#0f172a,#020617);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    }
+.time-unit{
+  background:rgba(255,255,255,0.08);
+  border-radius:10px;
+  padding:8px 6px;
+  text-align:center;
+  color:white;
+}
 
-    .timer-grid {
-      display: grid;
-      grid-template-columns: repeat(4,1fr);
-      gap: 10px;
-    }
+.time-value{
+  font-size:18px;
+  font-weight:700;
+}
 
-    .time-unit {
-      background: rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 12px 8px;
-      text-align: center;
-      color: white;
-    }
+.time-label{
+  font-size:10px;
+  opacity:.75;
+}
 
-    .time-value {
-      font-size: 26px;
-      font-weight: 700;
-      line-height: 1;
-    }
+.empty{
+  display:none;
+  text-align:center;
+  padding:20px;
+  border-radius:16px;
+  border:1px solid #f3c8d4;
+  background:#fff7fa;
+  color:var(--muted);
+}
 
-    .time-label {
-      font-size: 11px;
-      opacity: 0.7;
-      margin-top: 4px;
-      letter-spacing: 0.03em;
-    }
+@media (max-width:700px){
+  .deal-box{
+    padding-right:16px;
+  }
 
-    .empty-state {
-      display: none;
-      background: #fff7fa;
-      border: 1px solid #f3c8d4;
-      border-radius: 16px;
-      padding: 20px;
-      color: var(--muted);
-      font-size: 18px;
-      text-align: center;
-    }
-
-    @media (max-width: 760px) {
-      .deal-card {
-        grid-template-columns: 1fr;
-      }
-
-      .timer-grid {
-        gap: 8px;
-      }
-
-      .time-value {
-        font-size: 22px;
-      }
-
-      h1 {
-        font-size: 30px;
-      }
-    }
-  </style>
+  .timer{
+    position:static;
+    margin-top:12px;
+  }
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="page-card">
-      <h1>LiveDeal</h1>
-      <div class="sub">Limited-time offers from MOCAS. When the clock hits zero, the deal disappears.</div>
+<div class="wrap">
+<div class="page">
 
-      <div id="deal-list" class="deal-list"></div>
-      <div id="empty-state" class="empty-state">No live deals right now.</div>
+<h1>LiveDeal</h1>
+
+<div id="deal-list" class="deal-list"></div>
+<div id="empty" class="empty">No live deals right now.</div>
+
+</div>
+</div>
+
+<script>
+const DEALS = [
+  {
+    title:"Buy 3+ BerryFold items → 10% off",
+    note:"BerryFold only",
+    endTime:"2026-03-31T23:59:59"
+  },
+  {
+    title:"Any 2 Stem Flowers → 15% off",
+    note:"Limited floral deal",
+    endTime:"2026-04-05T20:00:00"
+  },
+  {
+    title:"Free coating on 4+ Poke-Balls",
+    note:"Applied manually",
+    endTime:"2026-04-10T23:59:59"
+  }
+];
+
+const list = document.getElementById("deal-list");
+const empty = document.getElementById("empty");
+
+function pad(n){ return String(n).padStart(2,"0"); }
+
+function remaining(t){
+  const diff = new Date(t) - Date.now();
+  if(diff <= 0) return null;
+
+  const s = Math.floor(diff/1000);
+  return {
+    d:Math.floor(s/86400),
+    h:Math.floor((s%86400)/3600),
+    m:Math.floor((s%3600)/60),
+    s:s%60
+  };
+}
+
+function render(){
+  const active = DEALS.filter(d=>remaining(d.endTime));
+
+  if(!active.length){
+    list.innerHTML="";
+    empty.style.display="block";
+    return;
+  }
+
+  empty.style.display="none";
+
+  list.innerHTML = active.map((deal,i)=>{
+    const t = remaining(deal.endTime);
+
+    return `
+    <div class="deal-card">
+      <div class="deal-box">
+        <div class="pill">LIVE NOW</div>
+        <div class="deal-title">${deal.title}</div>
+        <div class="deal-note">${deal.note || ""}</div>
+      </div>
+
+      <div class="timer">
+        <div class="timer-grid">
+          <div class="time-unit"><div class="time-value">${pad(t.d)}</div><div class="time-label">D</div></div>
+          <div class="time-unit"><div class="time-value">${pad(t.h)}</div><div class="time-label">H</div></div>
+          <div class="time-unit"><div class="time-value">${pad(t.m)}</div><div class="time-label">M</div></div>
+          <div class="time-unit"><div class="time-value">${pad(t.s)}</div><div class="time-label">S</div></div>
+        </div>
+      </div>
     </div>
-  </div>
+    `;
+  }).join("");
+}
 
-  <script>
-    const DEALS = [
-      {
-        title: "Buy 3 or more BerryFold items, get 10% off",
-        note: "Applies to BerryFold items only.",
-        endTime: "2026-03-31T23:59:59"
-      },
-      {
-        title: "Any 2 Stem Flowers for 15% off",
-        note: "Limited floral deal while supplies last.",
-        endTime: "2026-04-05T20:00:00"
-      },
-      {
-        title: "Free coating on 4+ Poke-Ball items",
-        note: "Coating discount applies automatically at confirmation.",
-        endTime: "2026-04-10T23:59:59"
-      }
-    ];
-
-    const dealList = document.getElementById("deal-list");
-    const emptyState = document.getElementById("empty-state");
-
-    function pad(n) {
-      return String(n).padStart(2, "0");
-    }
-
-    function getRemaining(endTime) {
-      const now = Date.now();
-      const end = new Date(endTime).getTime();
-      const diff = end - now;
-
-      if (diff <= 0) return null;
-
-      const total = Math.floor(diff / 1000);
-      return {
-        d: Math.floor(total / 86400),
-        h: Math.floor((total % 86400) / 3600),
-        m: Math.floor((total % 3600) / 60),
-        s: total % 60
-      };
-    }
-
-    function renderDeals() {
-      const activeDeals = DEALS.filter(deal => getRemaining(deal.endTime));
-
-      if (!activeDeals.length) {
-        dealList.innerHTML = "";
-        emptyState.style.display = "block";
-        return;
-      }
-
-      emptyState.style.display = "none";
-
-      dealList.innerHTML = activeDeals.map((deal, index) => {
-        const t = getRemaining(deal.endTime);
-
-        return `
-          <div class="deal-card">
-            <div class="deal-box">
-              <div class="pill">LIVE NOW</div>
-              <div class="deal-title">${deal.title}</div>
-              <div class="deal-note">${deal.note || ""}</div>
-            </div>
-
-            <div class="timer">
-              <div class="timer-grid">
-                <div class="time-unit">
-                  <div class="time-value" id="d-${index}">${pad(t.d)}</div>
-                  <div class="time-label">D</div>
-                </div>
-                <div class="time-unit">
-                  <div class="time-value" id="h-${index}">${pad(t.h)}</div>
-                  <div class="time-label">H</div>
-                </div>
-                <div class="time-unit">
-                  <div class="time-value" id="m-${index}">${pad(t.m)}</div>
-                  <div class="time-label">M</div>
-                </div>
-                <div class="time-unit">
-                  <div class="time-value" id="s-${index}">${pad(t.s)}</div>
-                  <div class="time-label">S</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    renderDeals();
-    setInterval(renderDeals, 1000);
-  </script>
+render();
+setInterval(render,1000);
+</script>
 </body>
 </html>
