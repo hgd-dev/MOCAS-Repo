@@ -158,12 +158,14 @@ const DEALS = [
   {
     title:"Early Bird Deal → Free Attribute Additions",
     note:"Removes all keychain and coating costs! Available only until Opening Day!",
+    startTime:"2026-03-27T23:59:59"
     endTime:"2026-03-31T23:59:59"
   },
   {
     title:"Opening Week Discount → 15% off Everything!",
     note:"For a limited time, any and all purchases fall under this discount!",
-    endTime:"2026-04-08T23:59:59"
+    startTime:"2026-03-31T23:59:59"
+    endTime:"2026-04-07T23:59:59"
   }
 ];
 
@@ -172,6 +174,16 @@ const empty = document.getElementById("empty");
 
 function pad(n){ return String(n).padStart(2,"0"); }
 
+function getStatus(deal) {
+  const now = Date.now();
+  const start = new Date(deal.startTime).getTime();
+  const end = new Date(deal.endTime).getTime();
+
+  if (now < start) return "upcoming";
+  if (now >= start && now < end) return "active";
+  return "expired";
+}
+  
 function remaining(t){
   const diff = new Date(t) - Date.now();
   if(diff <= 0) return null;
@@ -186,8 +198,7 @@ function remaining(t){
 }
 
 function render(){
-  const active = DEALS.filter(d=>remaining(d.endTime));
-
+  const active = DEALS.filter(d => getStatus(d) !== "expired");
   if(!active.length){
     list.innerHTML="";
     empty.style.display="block";
@@ -197,17 +208,24 @@ function render(){
   empty.style.display="none";
 
   list.innerHTML = active.map((deal,i)=>{
-    const t = remaining(deal.endTime);
+      const status = getStatus(deal);
+
+      const t = status === "active"? remaining(deal.endTime) : remaining(deal.startTime);
 
     return `
     <div class="deal-card">
       <div class="deal-box">
-        <div class="pill">LIVE NOW</div>
+        <div class="pill">
+          ${status === "active" ? "LIVE NOW" : "COMING SOON"}
+        </div>
         <div class="deal-title">${deal.title}</div>
         <div class="deal-note">${deal.note || ""}</div>
       </div>
 
       <div class="timer">
+      <div style="color:white;font-size:10px;margin-bottom:6px;opacity:.7;">
+        ${status === "active" ? "ENDS IN" : "STARTS IN"}
+      </div>
         <div class="timer-grid">
           <div class="time-unit"><div class="time-value">${pad(t.d)}</div><div class="time-label">D</div></div>
           <div class="time-unit"><div class="time-value">${pad(t.h)}</div><div class="time-label">H</div></div>
