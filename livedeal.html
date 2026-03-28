@@ -52,7 +52,9 @@ h1{
   padding:18px;
   min-height:140px;
 }
-
+.deal-soon{
+  opacity:0.85;
+}
 .deal-box{
   background:#fff7fa;
   border:1px solid #f3c8d4;
@@ -71,7 +73,14 @@ h1{
   font-size:12px;
   margin-bottom:8px;
 }
-
+.pill-live{
+  background:#fee2e2;
+  color:#7f1d1d;
+}
+.pill-soon{
+  background:#e0e7ff;
+  color:#3730a3;
+}
 .deal-title{
   font-size:16px;
   font-weight:700;
@@ -158,13 +167,13 @@ const DEALS = [
   {
     title:"Early Bird Deal → Free Attribute Additions",
     note:"Removes all keychain and coating costs! Available only until Opening Day!",
-    startTime:"2026-03-27T23:59:59"
+    startTime:"2026-03-27T23:59:59",
     endTime:"2026-03-31T23:59:59"
   },
   {
     title:"Opening Week Discount → 15% off Everything!",
     note:"For a limited time, any and all purchases fall under this discount!",
-    startTime:"2026-03-31T23:59:59"
+    startTime:"2026-03-31T23:59:59",
     endTime:"2026-04-07T23:59:59"
   }
 ];
@@ -213,9 +222,9 @@ function render(){
       const t = status === "active"? remaining(deal.endTime) : remaining(deal.startTime);
 
     return `
-    <div class="deal-card">
+    <div class="deal-card ${status === 'active' ? '' : 'deal-soon'}">
       <div class="deal-box">
-        <div class="pill">
+        <div class="pill ${status === 'active' ? 'pill-live' : 'pill-soon'}">
           ${status === "active" ? "LIVE NOW" : "COMING SOON"}
         </div>
         <div class="deal-title">${deal.title}</div>
